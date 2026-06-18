@@ -368,8 +368,33 @@
     .project-list {
       display: grid;
       gap: 8px;
-      max-height: 360px;
+      max-height: 420px;
       overflow: auto;
+    }
+
+    .project-list-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .project-list-group + .project-list-group {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(227, 200, 155, 0.45);
+    }
+
+    .project-list-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 780;
+    }
+
+    .project-list-heading strong {
+      color: var(--ink);
+      font-size: 15px;
     }
 
     .project-list-item {
@@ -1301,18 +1326,17 @@
       els.projectForm.addEventListener("submit", saveProject);
       els.projectCancelBtn.addEventListener("click", () => els.projectDialog.close());
       els.projectListBody.addEventListener("click", handleProjectListClick);
+      els.projectListBody.addEventListener("dblclick", openProjectFromCard);
+      els.projectListBody.addEventListener("contextmenu", openProjectFromCard);
       els.projectListCloseBtn.addEventListener("click", () => els.projectListDialog.close());
       els.projectListAddBtn.addEventListener("click", () => {
-        els.projectListDialog.close();
-        const project = createDefaultProject();
-        openProjectDialog(project);
+        createDefaultProject();
+        renderProjectListDialog();
       });
 
       els.taskBody.addEventListener("click", handleTaskClick);
-      els.taskBody.addEventListener("input", handleInlineTaskEdit);
-      els.taskBody.addEventListener("change", handleInlineTaskEdit);
-      els.taskBody.addEventListener("dblclick", openInlineTaskEditor);
-      els.taskBody.addEventListener("contextmenu", openInlineTaskEditor);
+      els.taskBody.addEventListener("dblclick", openTaskFromRow);
+      els.taskBody.addEventListener("contextmenu", openTaskFromRow);
       els.resetSortBtn.addEventListener("click", resetDefaultSort);
       els.taskBody.addEventListener("dragstart", handleDragStart);
       els.taskBody.addEventListener("dragover", handleDragOver);
@@ -1381,8 +1405,7 @@
       }
 
       if (event.target.closest("[data-add-project]")) {
-        const project = createDefaultProject();
-        openProjectDialog(project);
+        createDefaultProject();
         return;
       }
 
@@ -1401,6 +1424,7 @@
     }
 
     function openProjectFromCard(event) {
+      if (event.target.closest("button")) return;
       const card = event.target.closest("[data-project-id]");
       if (!card) return;
       event.preventDefault();
@@ -1463,20 +1487,46 @@
     }
 
     function renderProjectListDialog() {
-      const projects = [...state.projects].sort(compareProjects);
-      els.projectListBody.innerHTML = projects.length
-        ? projects.map(projectListItem).join("")
+      const groups = getProjectListGroups();
+      els.projectListBody.innerHTML = state.projects.length
+        ? groups.map(projectListGroup).join("")
         : `<div class="empty">还没有项目。</div>`;
+    }
+
+    function getProjectListGroups() {
+      const today = formatDate(new Date());
+      const completed = state.projects
+        .filter((project) => project.ddl && project.ddl < today)
+        .sort(compareProjects);
+      const active = state.projects
+        .filter((project) => project.ddl && project.ddl >= today)
+        .sort(compareProjects);
+      const unplanned = state.projects
+        .filter((project) => !project.ddl)
+        .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
+      return [
+        { title: "已完成", hint: "DDL 已经过了", projects: completed },
+        { title: "进行中", hint: "有 DDL 的项目", projects: active },
+        { title: "未计划", hint: "未设置 DDL", projects: unplanned }
+      ];
+    }
+
+    function projectListGroup(group) {
+      return `
+        <section class="project-list-group">
+          <div class="project-list-heading"><strong>${group.title}</strong><span>${group.projects.length} 个 · ${group.hint}</span></div>
+          ${group.projects.length ? group.projects.map(projectListItem).join("") : `<div class="empty">暂无项目</div>`}
+        </section>
+      `;
     }
 
     function projectListItem(project) {
       const ddl = project.ddl ? friendlyDate(project.ddl) : "未设置 DDL";
       return `
-        <div class="project-list-item" data-project-id="${project.id}">
+        <div class="project-list-item" data-project-id="${project.id}" title="双击或右键修改项目">
           <div class="project-name" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</div>
           <div class="project-ddl">${ddl}</div>
           <div class="project-card-actions">
-            <button class="icon-button" type="button" data-project-action="edit" title="修改项目" aria-label="修改项目">✎</button>
             <button class="icon-button" type="button" data-project-action="delete" title="删除项目" aria-label="删除项目">×</button>
           </div>
         </div>
@@ -1489,10 +1539,6 @@
       if (!button || !row) return;
       const project = findProject(row.dataset.projectId);
       if (!project) return;
-
-      if (button.dataset.projectAction === "edit") {
-        openProjectDialog(project);
-      }
 
       if (button.dataset.projectAction === "delete") {
         deleteProject(project, true);
@@ -1630,26 +1676,13 @@
       render();
     }
 
-    function handleInlineTaskEdit(event) {
-      const field = event.target.dataset.field;
+    function openTaskFromRow(event) {
       const row = event.target.closest("tr[data-task-id]");
-      if (!field || !row) return;
-      const task = state.tasks.find((item) => item.id === row.dataset.taskId);
-      if (!task || task.done) return;
-      task[field] = event.target.value;
-      if (field === "plannedStart") task.manualOrder = false;
-      saveData();
-      if (field !== "text") render();
-    }
-
-    function openInlineTaskEditor(event) {
-      const row = event.target.closest("tr[data-task-id]");
-      if (!row) return;
+      if (!row || event.target.closest("button")) return;
       const task = state.tasks.find((item) => item.id === row.dataset.taskId);
       if (!task || task.done) return;
       event.preventDefault();
-      const input = row.querySelector('[data-field="text"]');
-      if (input) input.focus();
+      openTaskDialog(task);
     }
 
     function resetDefaultSort() {
@@ -1769,7 +1802,6 @@
             </div>
           </div>
           <div class="project-card-actions">
-            <button class="icon-button" type="button" data-project-action="edit" title="修改项目" aria-label="修改项目">✎</button>
             <button class="icon-button" type="button" data-project-action="delete" title="删除项目" aria-label="删除项目">×</button>
           </div>
         </div>
@@ -1875,19 +1907,19 @@
         <tr class="task-row ${rowClass}" draggable="true" data-task-id="${task.id}">
           <td><span class="drag-handle">↕</span></td>
           <td>
-            ${task.done ? `<div class="task-title">${escapeHtml(text)}</div>${note}` : `<input class="inline-input" data-field="text" value="${escapeHtml(text)}">`}
+            <div class="task-title" title="${task.done ? "" : "双击或右键修改 Todo"}">${escapeHtml(text)}</div>
+            ${note}
           </td>
           <td>
-            ${task.done ? `<div class="chip" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</div>` : `<select class="inline-select" data-field="projectId">${projectOptionsHtml(task.projectId || "")}</select>`}
+            <div class="chip" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</div>
           </td>
-          <td>${task.done ? `<span class="planned-time ${task.plannedStart ? "" : "empty-time"}">${formatPlannedTime(task.plannedStart)}</span>` : `<input class="inline-time" data-field="plannedStart" type="time" step="300" value="${task.plannedStart || ""}">`}</td>
-          <td>${task.done ? friendlyDate(task.targetDate) : `<input class="inline-date" data-field="targetDate" type="date" value="${task.targetDate}">`}</td>
+          <td><span class="planned-time ${task.plannedStart ? "" : "empty-time"}">${formatPlannedTime(task.plannedStart)}</span></td>
+          <td>${friendlyDate(task.targetDate)}</td>
           <td><span class="status">${status}</span></td>
           <td>${completedDate}</td>
           <td>
             <div class="actions">
               <button class="icon-button ${task.done ? "action-secondary" : "action-complete"}" type="button" data-action="toggle" data-id="${task.id}" title="${actionTitle}" aria-label="${actionTitle}">${actionLabel}</button>
-              ${task.done ? "" : `<button class="icon-button action-secondary" type="button" data-action="edit" data-id="${task.id}" title="修改 Todo" aria-label="修改 Todo">✎</button>`}
               <button class="icon-button action-danger" type="button" data-action="delete" data-id="${task.id}" title="删除 Todo" aria-label="删除 Todo">×</button>
             </div>
           </td>

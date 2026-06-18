@@ -205,10 +205,23 @@
     }
 
     .project-rail-layout {
+      position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 150px;
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) 52px;
+      gap: 12px;
       align-items: stretch;
+    }
+
+    .project-rail-layout::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      top: 2px;
+      right: 60px;
+      bottom: 4px;
+      width: 34px;
+      background: linear-gradient(90deg, rgba(255, 250, 241, 0), rgba(91, 58, 24, 0.12));
+      border-radius: 0 10px 10px 0;
     }
 
     .project-rail {
@@ -223,8 +236,21 @@
     }
 
     .fixed-add-card {
-      width: 150px;
-      min-width: 150px;
+      width: 52px;
+      min-width: 52px;
+      min-height: 152px;
+      padding: 0;
+      font-size: 28px;
+    }
+
+    .fixed-add-card span {
+      font-size: 0;
+    }
+
+    .fixed-add-card span::before {
+      content: "+";
+      font-size: 28px;
+      line-height: 1;
     }
 
     .project-card {
@@ -360,9 +386,15 @@
     .schedule-editor {
       display: grid;
       grid-template-columns: minmax(112px, auto) minmax(0, 1fr);
-      gap: 8px;
+      gap: 7px;
       align-items: center;
       max-width: 100%;
+    }
+
+    .project-card .schedule-editor {
+      grid-template-columns: 1fr;
+      width: 100%;
+      padding-right: 30px;
     }
 
     .days-left {
@@ -430,7 +462,7 @@
       font-weight: 720;
     }
 
-    .project-card-actions {
+    .project-card > .project-card-actions {
       position: absolute;
       right: 12px;
       bottom: 12px;
@@ -439,7 +471,7 @@
       gap: 6px;
     }
 
-    .project-card-actions .icon-button {
+    .project-card > .project-card-actions .icon-button {
       width: 28px;
       min-width: 28px;
       min-height: 28px;
@@ -447,6 +479,26 @@
       background: rgba(246, 221, 199, 0.58);
       box-shadow: none;
       font-size: 13px;
+    }
+
+    .project-card:has(.schedule-editor) > .project-card-actions {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .project-list-item .project-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .project-list-item .project-card-actions .icon-button {
+      width: 30px;
+      min-width: 30px;
+      min-height: 30px;
+      color: rgba(185, 79, 50, 0.62);
+      background: rgba(246, 221, 199, 0.58);
+      box-shadow: none;
     }
 
     .project-list {
@@ -471,25 +523,61 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      width: 100%;
+      min-height: 34px;
+      padding: 0;
       color: var(--muted);
+      border: 0;
+      background: transparent;
+      text-align: left;
       font-size: 13px;
       font-weight: 780;
+      cursor: pointer;
+    }
+
+    .project-list-heading .heading-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .project-list-heading .chevron {
+      color: var(--accent);
+      font-size: 14px;
+      line-height: 1;
     }
 
     .project-list-heading strong {
-      color: var(--ink);
+      color: var(--text);
       font-size: 15px;
     }
 
     .project-list-item {
       display: grid;
-      grid-template-columns: minmax(160px, 1fr) 150px auto;
+      grid-template-columns: minmax(160px, 1fr) minmax(150px, 220px) 34px;
       gap: 8px;
       align-items: center;
       padding: 10px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff8ec;
+      overflow: hidden;
+    }
+
+    .project-list-item:has(.schedule-editor) {
+      grid-template-columns: minmax(150px, 1fr) minmax(280px, 1.2fr) 34px;
+    }
+
+    .project-list-item .project-ddl {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .project-list-item .project-ddl:has(.schedule-editor) {
+      overflow: visible;
+      white-space: normal;
     }
 
     .main-content {
@@ -655,19 +743,20 @@
     }
 
     .inline-date-editor {
-      grid-template-columns: minmax(78px, auto) minmax(58px, auto) minmax(58px, auto);
+      grid-template-columns: minmax(70px, auto) minmax(50px, auto) minmax(50px, auto);
     }
 
     .project-date-editor {
       grid-column: 1 / -1;
+      width: 100%;
     }
 
     .inline-time-editor select,
     .inline-date-editor select {
       width: auto;
       min-width: 0;
-      padding: 5px 7px;
-      font-size: 13px;
+      padding: 5px 6px;
+      font-size: 12px;
       font-variant-numeric: tabular-nums;
     }
 
@@ -1284,8 +1373,12 @@
       }
 
       .project-rail-layout {
-        grid-template-columns: minmax(0, 1fr) 118px;
+        grid-template-columns: minmax(0, 1fr) 48px;
         gap: 10px;
+      }
+
+      .project-rail-layout::after {
+        right: 56px;
       }
 
       .project-rail {
@@ -1293,12 +1386,23 @@
       }
 
       .fixed-add-card {
-        width: 118px;
-        min-width: 118px;
+        width: 48px;
+        min-width: 48px;
       }
 
-      .project-list-item {
-        grid-template-columns: 1fr;
+      .project-list-item,
+      .project-list-item:has(.schedule-editor) {
+        grid-template-columns: 1fr 34px;
+      }
+
+      .project-list-item .project-name,
+      .project-list-item .project-ddl {
+        grid-column: 1 / 2;
+      }
+
+      .project-list-item .project-card-actions {
+        grid-column: 2 / 3;
+        grid-row: 1 / 3;
       }
     }
   </style>
@@ -1505,6 +1609,7 @@
     state.rangeEnd = "";
     state.viewMode = "date";
     state.todoListView = localStorage.getItem("daily-todo-list-view") || "time";
+    state.projectListCollapsed = JSON.parse(localStorage.getItem("daily-project-list-collapsed") || "{}");
     state.editingProjectId = null;
     state.editingTaskId = null;
     state.reviewQueue = [];
@@ -1859,17 +1964,21 @@
         .filter((project) => isPlannedLater(project))
         .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
       return [
-        { title: "进行中", hint: "有 DDL 的项目", projects: active },
-        { title: "待计划", hint: "暂不排期", projects: unplanned },
-        { title: "已完成", hint: "DDL 已经过了", projects: completed }
+        { key: "active", title: "进行中", hint: "有 DDL 的项目", projects: active },
+        { key: "unplanned", title: "待计划", hint: "暂不排期", projects: unplanned },
+        { key: "completed", title: "已完成", hint: "DDL 已经过了", projects: completed }
       ];
     }
 
     function projectListGroup(group) {
+      const collapsed = Boolean(state.projectListCollapsed[group.key]);
       return `
         <section class="project-list-group">
-          <div class="project-list-heading"><strong>${group.title}</strong><span>${group.projects.length} 个 · ${group.hint}</span></div>
-          ${group.projects.length ? group.projects.map(projectListItem).join("") : `<div class="empty">暂无项目</div>`}
+          <button class="project-list-heading" type="button" data-project-group-toggle="${group.key}" aria-expanded="${!collapsed}">
+            <span class="heading-main"><span class="chevron">${collapsed ? "▶" : "▼"}</span><strong>${group.title}</strong></span>
+            <span>${group.projects.length} 个 · ${group.hint}</span>
+          </button>
+          ${collapsed ? "" : (group.projects.length ? group.projects.map(projectListItem).join("") : `<div class="empty">暂无项目</div>`)}
         </section>
       `;
     }
@@ -1888,6 +1997,15 @@
     }
 
     function handleProjectListClick(event) {
+      const heading = event.target.closest("[data-project-group-toggle]");
+      if (heading) {
+        const key = heading.dataset.projectGroupToggle;
+        state.projectListCollapsed[key] = !state.projectListCollapsed[key];
+        localStorage.setItem("daily-project-list-collapsed", JSON.stringify(state.projectListCollapsed));
+        renderProjectListDialog();
+        return;
+      }
+
       const button = event.target.closest("button[data-project-action]");
       const row = event.target.closest("[data-project-id]");
       if (!button || !row) return;

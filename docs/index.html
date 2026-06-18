@@ -205,9 +205,9 @@
 
     .project-card {
       display: grid;
-      align-content: space-between;
-      min-height: 112px;
-      padding: 13px;
+      grid-template-rows: 1fr auto;
+      min-height: 126px;
+      padding: 14px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff7e8;
@@ -215,30 +215,84 @@
     }
 
     .project-card.has-ddl {
-      background: var(--gold-soft);
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255, 242, 200, 0.96), rgba(255, 250, 240, 0.9)),
+        var(--gold-soft);
       border-color: #d9aa4e;
+    }
+
+    .project-card.has-ddl::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, var(--accent), var(--gold));
     }
 
     .project-card.add-card {
       place-items: center;
       color: var(--teal);
       background: var(--teal-soft);
-      border-style: dashed;
+      border: 1px dashed rgba(47, 127, 120, 0.45);
       font-weight: 760;
+    }
+
+    .project-content {
+      display: grid;
+      gap: 9px;
+      min-width: 0;
+      padding-left: 2px;
     }
 
     .project-name {
       min-width: 0;
-      font-size: 16px;
-      font-weight: 760;
+      font-size: 17px;
+      font-weight: 780;
       line-height: 1.25;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
+    .project-countdown {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .days-left {
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+      min-width: 72px;
+      min-height: 52px;
+      padding: 4px 10px;
+      color: #fffaf0;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #d48737);
+      box-shadow: 0 8px 18px rgba(180, 75, 43, 0.18);
+      font-size: 28px;
+      font-weight: 820;
+      line-height: 1;
+    }
+
+    .days-left small {
+      margin-left: 2px;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .countdown-text {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
     .project-ddl {
-      margin-top: 8px;
       color: var(--gold);
       font-size: 13px;
       font-weight: 720;
@@ -248,7 +302,15 @@
       display: flex;
       justify-content: flex-end;
       gap: 6px;
-      margin-top: 10px;
+      margin-top: 8px;
+    }
+
+    .project-card-actions .icon-button {
+      width: 34px;
+      min-width: 34px;
+      min-height: 34px;
+      color: var(--accent);
+      background: rgba(247, 221, 197, 0.78);
     }
 
     .project-list {
@@ -332,11 +394,12 @@
     .add-todo {
       width: 100%;
       min-height: 38px;
-      color: var(--accent);
-      border: 1px dashed #9fb8c5;
+      color: var(--teal);
+      border: 1px dashed rgba(47, 127, 120, 0.45);
       border-radius: 7px;
-      background: var(--accent-soft);
+      background: var(--teal-soft);
       font-size: 24px;
+      font-weight: 780;
       line-height: 1;
     }
 
@@ -1158,11 +1221,15 @@
     }
 
     function projectCard(project) {
+      const countdown = getDdlCountdown(project.ddl);
       return `
         <div class="project-card has-ddl" data-project-id="${project.id}">
-          <div>
+          <div class="project-content">
             <div class="project-name" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</div>
-            <div class="project-ddl">DDL ${friendlyDate(project.ddl)}</div>
+            <div class="project-countdown">
+              <div class="days-left">${countdown.days}<small>天</small></div>
+              <div class="countdown-text">距离 ${friendlyDate(project.ddl)}<br>${countdown.label}</div>
+            </div>
           </div>
           <div class="project-card-actions">
             <button class="icon-button" type="button" data-project-action="edit" title="修改项目" aria-label="修改项目">✎</button>
@@ -1178,6 +1245,15 @@
           <span>+ 添加项目</span>
         </button>
       `;
+    }
+
+    function getDdlCountdown(dateString) {
+      const today = new Date(`${formatDate(new Date())}T00:00:00`);
+      const ddl = new Date(`${dateString}T00:00:00`);
+      const diff = Math.ceil((ddl - today) / 86400000);
+      if (diff > 0) return { days: diff, label: `还剩 ${diff} 天` };
+      if (diff === 0) return { days: 0, label: "今天截止" };
+      return { days: Math.abs(diff), label: `已超期 ${Math.abs(diff)} 天` };
     }
 
     function renderDaily() {

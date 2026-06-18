@@ -1652,9 +1652,9 @@
         .filter((project) => isPlannedLater(project))
         .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
       return [
-        { title: "已完成", hint: "DDL 已经过了", projects: completed },
         { title: "进行中", hint: "有 DDL 的项目", projects: active },
-        { title: "待计划", hint: "暂不排期", projects: unplanned }
+        { title: "待计划", hint: "暂不排期", projects: unplanned },
+        { title: "已完成", hint: "DDL 已经过了", projects: completed }
       ];
     }
 

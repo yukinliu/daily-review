@@ -234,7 +234,7 @@
     .project-rail {
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: max(210px, calc((100% - 42px) / 4));
+      grid-auto-columns: max(210px, calc((100% - 28px) / 3));
       gap: 14px;
       overflow-x: auto;
       overscroll-behavior-x: contain;
@@ -243,7 +243,7 @@
     }
 
     .project-rail-layout.has-overflow .project-rail {
-      grid-auto-columns: max(210px, calc((100% - 60px) / 4));
+      grid-auto-columns: max(210px, calc((100% - 54px) / 3));
     }
 
     .fixed-add-card {
@@ -551,10 +551,18 @@
       cursor: pointer;
     }
 
+    .project-list-heading:focus {
+      outline: none;
+    }
+
+    .project-list-heading:focus-visible {
+      box-shadow: inset 0 0 0 2px rgba(185, 79, 50, 0.18);
+    }
+
     .project-list-heading .heading-main {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .project-list-heading .chevron {
@@ -574,19 +582,20 @@
 
     .project-list-item {
       display: grid;
-      grid-template-columns: minmax(170px, 1fr) minmax(140px, 190px) 32px;
-      gap: 10px;
+      grid-template-columns: minmax(190px, 1fr) minmax(150px, 220px) 38px;
+      gap: 12px;
       align-items: center;
-      margin: 8px 10px;
-      padding: 10px 12px;
+      min-height: 64px;
+      margin: 9px 12px;
+      padding: 12px 14px;
       border: 1px solid rgba(227, 200, 155, 0.72);
-      border-radius: 9px;
-      background: rgba(255, 253, 247, 0.78);
-      overflow: hidden;
+      border-radius: 10px;
+      background: rgba(255, 253, 247, 0.84);
+      overflow: visible;
     }
 
     .project-list-item:has(.schedule-editor) {
-      grid-template-columns: minmax(170px, 1fr) minmax(330px, 1.25fr) 32px;
+      grid-template-columns: minmax(190px, 1fr) minmax(340px, 1.25fr) 38px;
     }
 
     .project-list-item .project-ddl {
@@ -2637,8 +2646,8 @@
         .sort(compareProjects);
       const plannedLaterCount = state.projects.filter((project) => isPlannedLater(project)).length;
       const cardCount = draftProjects.length + ddlProjects.length + (plannedLaterCount ? 1 : 0);
-      els.projectHint.textContent = cardCount > 4 ? "左右滑动查看更多" : "";
-      els.projectRail.closest(".project-rail-layout").classList.toggle("has-overflow", cardCount > 4);
+      els.projectHint.textContent = cardCount > 3 ? "左右滑动查看更多" : "";
+      els.projectRail.closest(".project-rail-layout").classList.toggle("has-overflow", cardCount > 3);
       els.projectRail.innerHTML = draftProjects.map(projectCard).join("")
         + ddlProjects.map(projectCard).join("")
         + (plannedLaterCount ? otherProjectCard(plannedLaterCount) : "");

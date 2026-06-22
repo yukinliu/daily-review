@@ -1454,14 +1454,18 @@
 
     .mood-chart {
       padding: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
       border: 1px solid rgba(227, 200, 155, 0.58);
       border-radius: 9px;
       background: linear-gradient(135deg, rgba(255, 253, 247, 0.96), rgba(249, 241, 224, 0.72));
+      scrollbar-color: rgba(185, 79, 50, 0.24) transparent;
     }
 
     .mood-chart svg {
       display: block;
-      width: 100%;
+      width: var(--chart-width, 720px);
+      max-width: none;
       height: 260px;
     }
 
@@ -3291,8 +3295,8 @@
       state.rangeEnd = today;
       state.selectedDate = today;
       state.calendarAnchorDate = "";
-      state.calendarFilterYear = "";
-      state.calendarFilterMonth = "";
+      state.calendarFilterYear = String(new Date(`${today}T00:00:00`).getFullYear());
+      state.calendarFilterMonth = String(new Date(`${today}T00:00:00`).getMonth() + 1);
       state.ratingFilter = "all";
       state.viewMode = "calendar";
       els.rangeStart.value = state.rangeStart;
@@ -4203,7 +4207,7 @@
       els.dayStateStrip.style.setProperty("--mood-bg", "rgba(255, 250, 241, 0.9)");
       els.dayStateStrip.style.setProperty("--mood-color", "var(--accent-strong)");
       els.stateStripTitle.innerHTML = "";
-      els.moodSummary.innerHTML = `<span>感受</span>${renderMoodCurve(notes)}`;
+      els.moodSummary.innerHTML = `<span>感受</span>${renderMoodCurve(getRecentMoodNotes(notes))}`;
       delete els.thoughtSummary.dataset.tooltip;
       delete els.thoughtSummary.dataset.tooltipAlways;
       els.thoughtSummary.innerHTML = `<span>想法</span><div class="thought-line"><span class="thought-text">这期间你有 ${thoughtDays} 天记录了自己的想法</span></div>`;
@@ -4276,16 +4280,13 @@
       const month = Number(state.calendarFilterMonth);
       if (!year) return { start: first, end: today };
 
-      let start = `${year}-01-01`;
-      let end = `${year}-12-31`;
       if (month) {
-        start = `${year}-${String(month).padStart(2, "0")}-01`;
-        end = formatDate(new Date(year, month, 0));
+        return {
+          start: `${year}-${String(month).padStart(2, "0")}-01`,
+          end: formatDate(new Date(year, month, 0))
+        };
       }
-      if (start < first) start = first;
-      if (end > today) end = today;
-      if (start > end) start = end;
-      return { start, end };
+      return { start: `${year}-01-01`, end: `${year}-12-31` };
     }
 
     function getCalendarMonthRangeLabel() {
@@ -4318,7 +4319,7 @@
       const draft = isDraftProject(project);
       const countdown = hasProjectDdl(project) ? getDdlCountdown(project.ddl) : { label: "", variant: "waiting-project", longRange: false };
       const scheduleText = mode === "plannedLater" ? "还没想好" : "未安排";
-      const timeTotal = sumMinutes(getBaseTasksForCurrentRange().filter((task) => task.projectId === project.id));
+      const timeTotal = sumMinutes(getProjectRailTasksForCurrentRange().filter((task) => task.projectId === project.id));
       const timeMarkup = `<div class="project-time-total">累计 ${formatCompactDuration(timeTotal)}</div>`;
       const scheduleMarkup = hasProjectDdl(project)
         ? `<div class="project-countdown" data-project-field="ddl" title="双击或右键修改 DDL">
@@ -4339,7 +4340,7 @@
 
     function otherProjectCard(count) {
       const plannedIds = new Set(state.projects.filter((project) => isPlannedLater(project)).map((project) => project.id));
-      const timeTotal = sumMinutes(getBaseTasksForCurrentRange().filter((task) => plannedIds.has(task.projectId)));
+      const timeTotal = sumMinutes(getProjectRailTasksForCurrentRange().filter((task) => plannedIds.has(task.projectId)));
       return `
         <button class="project-card other-card ${state.projectFilterKey === "__planned_later__" ? "is-filtered" : ""}" type="button" data-project-filter-key="__planned_later__">
           <span>待计划</span>
@@ -4347,6 +4348,14 @@
           <span class="project-time-total">累计 ${formatCompactDuration(timeTotal)}</span>
         </button>
       `;
+    }
+
+    function getProjectRailTasksForCurrentRange() {
+      if (state.viewMode === "calendar") {
+        const { start, end } = getCalendarDisplayRange();
+        return state.tasks.filter((task) => task.targetDate >= start && task.targetDate <= end);
+      }
+      return getBaseTasksForCurrentRange();
     }
 
     function addProjectCard() {
@@ -5111,12 +5120,16 @@
       return map[value] || 0;
     }
 
+    function getRecentMoodNotes(notes, limit = 7) {
+      return notes.slice(Math.max(0, notes.length - limit));
+    }
+
     function renderMoodCurve(notes, detailed = false) {
       const options = getMoodOptions();
       const scored = notes
         .map((note, index) => ({ ...note, index, score: getMoodScore(note.mood), mood: getMoodOption(note.mood) }))
         .filter((note) => note.score);
-      const width = detailed ? 720 : 460;
+      const width = detailed ? Math.max(720, notes.length * 104) : 460;
       const height = detailed ? 260 : 86;
       const padLeft = detailed ? 118 : 12;
       const padRight = detailed ? 26 : 12;
@@ -5137,7 +5150,8 @@
             return `<line class="${guideClass}" x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}"></line><text x="8" y="${Number(y) + 4}" fill="${score === 4 ? "#7b6250" : "#9a826f"}" font-size="11">${mood.label}</text>`;
           }).join("")
         : `<line class="neutral-guide" x1="${padLeft}" y1="${neutralY}" x2="${width - padRight}" y2="${neutralY}"></line>`;
-      if (empty) return `<div class="mood-curve ${detailed ? "mood-chart" : ""}"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="暂无状态曲线">${guides}</svg></div>`;
+      const chartStyle = detailed ? ` style="--chart-width:${width}px"` : "";
+      if (empty) return `<div class="mood-curve ${detailed ? "mood-chart" : ""}"${chartStyle}><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="暂无状态曲线">${guides}</svg></div>`;
       const segments = scored.length === 1 ? "" : scored.slice(1).map((note, index) => {
         const prev = scored[index];
         const avg = (prev.score + note.score) / 2;
@@ -5156,7 +5170,7 @@
         if (notes.length > 12 && index % Math.ceil(notes.length / 8) !== 0 && index !== notes.length - 1) return "";
         return `<text x="${xFor(index).toFixed(1)}" y="${height - 7}" text-anchor="middle" fill="#8a684f" font-size="10">${friendlyDate(note.date).replace(/周.*/, "")}</text>`;
       }).join("") : "";
-      return `<div class="mood-curve ${detailed ? "mood-chart" : ""}"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="整体状态曲线">${guides}${segments}${singlePoint}${circles}${labels}</svg></div>`;
+      return `<div class="mood-curve ${detailed ? "mood-chart" : ""}"${chartStyle}><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="整体状态曲线">${guides}${segments}${singlePoint}${circles}${labels}</svg></div>`;
     }
 
     function handleMoodSummaryClick() {
@@ -5172,6 +5186,10 @@
       els.noteDetailTitle.textContent = "整体趋势";
       els.noteDetailBody.innerHTML = renderMoodCurve(notes, true);
       els.noteDetailDialog.showModal();
+      requestAnimationFrame(() => {
+        const chart = els.noteDetailBody.querySelector(".mood-chart");
+        if (chart) chart.scrollLeft = chart.scrollWidth;
+      });
     }
 
     function openThoughtDetailDialog() {

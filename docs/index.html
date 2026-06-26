@@ -12,10 +12,10 @@
       --text: #332216;
       --muted: #7b6250;
       --line: #e3c99a;
-      --red-bg: #fff3ec;
+      --red-bg: #fff7f2;
       --red-line: #b94f32;
       --red-text: #8f3225;
-      --green-bg: #edf4e4;
+      --green-bg: #f3f7ed;
       --green-line: #3f8567;
       --green-text: #246950;
       --accent: #b94f32;
@@ -55,6 +55,10 @@
       cursor: pointer;
     }
 
+    .emoji-mark {
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    }
+
     .app {
       width: min(1280px, calc(100vw - 28px));
       margin: 0 auto;
@@ -80,6 +84,54 @@
       align-items: center;
       padding: 12px;
       margin-bottom: 12px;
+    }
+
+    .calendar-range-title {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .calendar-range-title button,
+    .calendar-range-title select {
+      min-height: 38px;
+      border-radius: 7px;
+      font-size: 15px;
+      font-weight: 760;
+    }
+
+    .calendar-range-title button {
+      padding: 0 14px;
+      color: var(--accent);
+      border: 1px solid rgba(185, 79, 50, 0.16);
+      background: rgba(255, 248, 236, 0.7);
+    }
+
+    .calendar-range-title button.active {
+      background: rgba(255, 248, 236, 0.96);
+      box-shadow: inset 0 0 0 1px rgba(185, 79, 50, 0.12);
+    }
+
+    .calendar-range-title select {
+      width: auto;
+      min-width: 108px;
+      padding-right: 28px;
+      color: var(--text);
+      background: #fffdf7;
+    }
+
+    .topbar.calendar-mode {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .topbar.calendar-mode .calendar-range-title {
+      display: flex;
+    }
+
+    .topbar.calendar-mode .segmented,
+    .topbar.calendar-mode .range-control {
+      display: none;
     }
 
     .segmented {
@@ -138,6 +190,21 @@
       font-size: 13px;
     }
 
+    .range-control .range-helper {
+      min-height: 38px;
+      padding: 0 12px;
+      color: var(--accent);
+      border: 1px solid rgba(185, 79, 50, 0.14);
+      background: rgba(255, 248, 236, 0.52);
+      box-shadow: none;
+    }
+
+    .range-control .range-helper.active {
+      border-color: rgba(185, 79, 50, 0.22);
+      background: rgba(255, 248, 236, 0.82);
+      box-shadow: inset 0 0 0 1px rgba(185, 79, 50, 0.08);
+    }
+
     input,
     select,
     textarea {
@@ -194,6 +261,12 @@
       gap: 8px;
       align-items: center;
       justify-content: flex-end;
+    }
+
+    .ghost.active {
+      color: var(--accent);
+      background: rgba(246, 221, 199, 0.82);
+      box-shadow: inset 0 0 0 2px rgba(185, 79, 50, 0.12);
     }
 
     .account-button {
@@ -612,6 +685,19 @@
       line-height: 1;
     }
 
+    .project-rail-layout.readonly-rail {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .project-rail-layout.readonly-rail::after {
+      right: 0;
+    }
+
+    .project-rail-layout.readonly-rail .project-rail {
+      padding-right: 2px;
+    }
+
     .project-card {
       position: relative;
       display: grid;
@@ -632,6 +718,22 @@
     .project-card:hover {
       transform: translateY(-1px);
       box-shadow: 0 14px 28px rgba(91, 58, 24, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    }
+
+    .project-card.is-filtered {
+      border-color: rgba(40, 127, 116, 0.72);
+      box-shadow: 0 0 0 3px rgba(40, 127, 116, 0.13), 0 16px 30px rgba(40, 127, 116, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+    }
+
+    .project-card.is-filtered::after {
+      content: "";
+      position: absolute;
+      inset: 10px 10px auto auto;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--teal);
+      box-shadow: 0 0 0 5px rgba(40, 127, 116, 0.12);
     }
 
     .project-card.has-ddl {
@@ -876,8 +978,7 @@
     .project-list {
       display: grid;
       gap: 12px;
-      max-height: min(62vh, 560px);
-      overflow: auto;
+      overflow: visible;
       padding-right: 3px;
       outline: none;
     }
@@ -958,6 +1059,10 @@
       grid-template-columns: minmax(190px, 1fr) minmax(340px, 1.25fr) 38px;
     }
 
+    .project-list-item.is-readonly {
+      grid-template-columns: minmax(190px, 1fr) minmax(150px, 220px);
+    }
+
     .project-list-item .project-ddl {
       min-width: 0;
       overflow: hidden;
@@ -1034,12 +1139,12 @@
 
     .day-state-strip {
       display: grid;
-      grid-template-columns: minmax(190px, 0.88fr) minmax(0, 1.75fr) auto;
-      gap: 18px;
-      align-items: center;
-      min-height: 72px;
-      margin: 0 0 2px;
-      padding: 14px 16px;
+      grid-template-columns: minmax(230px, 0.95fr) minmax(0, 1.65fr) auto;
+      gap: 12px;
+      align-items: stretch;
+      min-height: 74px;
+      margin: 0 0 12px;
+      padding: 10px;
       border: 1px solid rgba(227, 200, 155, 0.58);
       border-radius: 10px;
       background: linear-gradient(135deg, var(--mood-bg, rgba(255, 250, 241, 0.9)), rgba(255, 253, 247, 0.95));
@@ -1047,7 +1152,7 @@
     }
 
     .day-state-strip.range-mode {
-      grid-template-columns: minmax(380px, 1.35fr) minmax(0, 1fr);
+      grid-template-columns: minmax(340px, 1.25fr) minmax(0, 1fr);
       cursor: default;
     }
 
@@ -1055,9 +1160,32 @@
       display: none;
     }
 
+    .state-strip-title,
     .mood-summary,
     .thought-summary {
       min-width: 0;
+      padding: 9px 12px;
+      border: 1px solid rgba(227, 200, 155, 0.42);
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.48);
+    }
+
+    .state-strip-title {
+      display: none;
+    }
+
+    .state-strip-title span,
+    .mood-summary span,
+    .thought-summary > span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .state-strip-title strong {
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.1;
     }
 
     .day-state-strip.range-mode .mood-summary,
@@ -1071,33 +1199,41 @@
 
     .mood-summary {
       display: grid;
+      align-content: center;
       gap: 4px;
     }
 
-    .mood-summary span,
-    .thought-summary > span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 720;
-    }
-
     .mood-summary strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
       color: var(--mood-color, var(--text));
       font-size: 19px;
       line-height: 1.16;
     }
 
+    .mood-summary .mood-emoji {
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-size: 21px;
+      line-height: 1;
+    }
+
     .thought-summary {
       display: grid;
+      align-content: center;
       gap: 4px;
-      min-height: 46px;
-      padding: 8px 14px;
+      min-height: 52px;
       color: var(--text);
       font-weight: 760;
       overflow: hidden;
-      border-left: 1px solid rgba(227, 200, 155, 0.52);
-      background: rgba(255, 253, 247, 0.42);
-      border-radius: 8px;
+    }
+
+    #openDayStateBtn {
+      align-self: center;
+      color: var(--teal);
+      background: var(--teal-soft);
+      border: 1px solid rgba(40, 127, 116, 0.24);
     }
 
     .thought-line {
@@ -1324,31 +1460,101 @@
     }
 
     #noteDetailDialog {
-      width: min(760px, calc(100vw - 28px));
+      width: min(980px, calc(100vw - 28px));
+    }
+
+    #noteDetailDialog {
+      height: min(82vh, 760px);
     }
 
     .note-detail-body {
       display: grid;
       gap: 12px;
+      min-height: 0;
+      overflow: visible;
+      padding-right: 2px;
     }
 
-    .mood-chart {
+    .note-detail-body .thought-list {
+      max-height: none;
+      overflow: visible;
+    }
+
+    .note-detail-body .thought-item {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.52);
+    }
+
+    .note-detail-body .thought-item:hover {
+      background: rgba(255, 248, 236, 0.74);
+    }
+
+    #thoughtPreviewDialog {
+      width: min(720px, calc(100vw - 28px));
+    }
+
+    .thought-preview-meta {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .thought-preview-content {
+      max-height: min(52vh, 460px);
+      overflow: auto;
+      padding: 14px 15px;
+      border: 1px solid rgba(227, 200, 155, 0.58);
+      border-radius: 9px;
+      background: rgba(255, 253, 247, 0.82);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 650;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .mood-chart-shell {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
       padding: 10px;
       border: 1px solid rgba(227, 200, 155, 0.58);
       border-radius: 9px;
       background: linear-gradient(135deg, rgba(255, 253, 247, 0.96), rgba(249, 241, 224, 0.72));
+      overflow: hidden;
+    }
+
+    .mood-y-axis {
+      z-index: 1;
+      background: linear-gradient(90deg, rgba(255, 253, 247, 0.98), rgba(255, 253, 247, 0.84));
+      border-right: 1px solid rgba(227, 200, 155, 0.25);
+    }
+
+    .mood-y-axis svg {
+      display: block;
+      width: 112px;
+      height: 260px;
+    }
+
+    .mood-chart {
+      padding: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-color: rgba(185, 79, 50, 0.24) transparent;
     }
 
     .mood-chart svg {
       display: block;
-      width: 100%;
+      width: var(--chart-width, 720px);
+      max-width: none;
       height: 260px;
     }
 
     .thought-day {
-      border: 1px solid rgba(227, 200, 155, 0.54);
+      border: 1px solid rgba(227, 200, 155, 0.38);
       border-radius: 9px;
-      background: rgba(255, 253, 247, 0.76);
+      background: rgba(255, 253, 247, 0.54);
       overflow: hidden;
     }
 
@@ -1360,7 +1566,7 @@
       color: var(--text);
       font-weight: 800;
       cursor: pointer;
-      background: linear-gradient(90deg, rgba(255, 246, 229, 0.86), rgba(255, 253, 247, 0.8));
+      background: linear-gradient(90deg, rgba(255, 246, 229, 0.62), rgba(255, 253, 247, 0.56));
     }
 
     .thought-day .thought-list {
@@ -1404,7 +1610,7 @@
 
     .status-panel {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 8px;
       padding: 0;
       overflow: hidden;
@@ -1603,6 +1809,146 @@
     [data-task-field="completionRating"],
     [data-project-field="ddl"] {
       cursor: pointer;
+    }
+
+    .field-edit-popover {
+      position: fixed;
+      z-index: 80;
+      display: grid;
+      gap: 8px;
+      width: min(var(--popover-width, 320px), calc(100vw - 28px));
+      max-height: min(74vh, 440px);
+      padding: 10px;
+      overflow: auto;
+      border: 1px solid rgba(227, 200, 155, 0.72);
+      border-radius: 10px;
+      background: #fffdf7;
+      box-shadow: 0 18px 48px rgba(65, 39, 23, 0.18);
+      color: var(--text);
+    }
+
+    .field-edit-popover label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 780;
+    }
+
+    .field-edit-popover.quick-menu {
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .field-edit-control {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 10px;
+      color: var(--text);
+      border: 1px solid rgba(227, 200, 155, 0.74);
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.96);
+      font-size: 15px;
+      font-weight: 720;
+      line-height: 1.45;
+    }
+
+    textarea.field-edit-control {
+      min-height: 168px;
+      max-height: min(48vh, 380px);
+      resize: vertical;
+      overflow: auto;
+      font-weight: 650;
+    }
+
+    .task-field-dialog .dialog-content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .task-field-dialog .inline-date-editor {
+      display: grid;
+      grid-template-columns: minmax(116px, 1fr) minmax(86px, 0.75fr) minmax(86px, 0.75fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .task-field-dialog .inline-date-editor select {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      font-size: 16px;
+      font-weight: 760;
+    }
+
+    .quick-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text);
+      background: transparent;
+      font-size: 15px;
+      font-weight: 760;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .quick-option:hover,
+    .quick-option.is-selected {
+      border-color: rgba(126, 172, 154, 0.46);
+      background: rgba(220, 239, 230, 0.64);
+      color: var(--green-dark);
+    }
+
+    .quick-option .quick-meta {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .quick-duration-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .quick-duration-grid .quick-option {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .quick-custom {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding-top: 4px;
+      border-top: 1px solid rgba(227, 200, 155, 0.42);
+    }
+
+    .quick-custom input {
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid rgba(227, 200, 155, 0.74);
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.96);
+      font-size: 15px;
+      font-weight: 720;
+    }
+
+    .quick-custom button {
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 14px;
+    }
+
+    .drag-handle {
+      display: none;
     }
 
     table {
@@ -1847,8 +2193,8 @@
 
     .hover-tooltip {
       position: fixed;
-      z-index: 9999;
-      max-width: min(420px, calc(100vw - 32px));
+      z-index: 20000;
+      max-width: min(560px, calc(100vw - 32px));
       padding: 9px 11px;
       color: #fffaf0;
       background: rgba(57, 36, 26, 0.94);
@@ -1977,6 +2323,16 @@
       border: 1px solid var(--line);
     }
 
+    .calendar-project.project-highlight {
+      border-color: rgba(40, 127, 116, 0.68);
+      background: linear-gradient(135deg, rgba(221, 240, 230, 0.95), rgba(255, 253, 247, 0.94));
+      box-shadow: inset 4px 0 0 rgba(40, 127, 116, 0.72), 0 6px 14px rgba(40, 127, 116, 0.08);
+    }
+
+    .calendar-project.project-highlight strong {
+      color: var(--teal);
+    }
+
     .calendar-project.unassigned {
       background: rgba(238, 229, 212, 0.46);
       border-color: rgba(138, 104, 79, 0.22);
@@ -2002,12 +2358,25 @@
 
     dialog {
       width: min(700px, calc(100vw - 28px));
-      max-height: min(760px, calc(100vh - 28px));
+      max-width: calc(100vw - 28px);
+      max-height: calc(100vh - 28px);
       padding: 0;
       border: 0;
       border-radius: 8px;
       box-shadow: 0 24px 70px rgba(31, 39, 45, 0.24);
       overflow: hidden;
+    }
+
+    dialog[open] {
+      display: flex;
+      resize: both;
+      min-width: min(360px, calc(100vw - 28px));
+      min-height: 220px;
+    }
+
+    dialog.is-dragged {
+      margin: 0;
+      position: fixed;
     }
 
     dialog::backdrop {
@@ -2020,6 +2389,7 @@
 
     #projectListDialog {
       width: min(760px, calc(100vw - 28px));
+      height: min(82vh, 760px);
     }
 
     #projectListDialog:focus,
@@ -2029,16 +2399,94 @@
     }
 
     #projectListDialog .dialog-body {
-      gap: 16px;
-      padding: 22px 24px 18px;
+      padding: 0;
     }
 
-
     .dialog-body {
-      display: grid;
-      gap: 12px;
-      padding: 18px;
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      gap: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0;
       background: #fffdf7;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    dialog[open] .dialog-body {
+      height: 100%;
+      max-height: none;
+    }
+
+    .dialog-titlebar {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 18px 10px;
+      cursor: move;
+      user-select: none;
+    }
+
+    .dialog-titlebar h2 {
+      cursor: inherit;
+    }
+
+    .dialog-titlebar.is-titleless {
+      justify-content: flex-end;
+      padding-bottom: 4px;
+    }
+
+    .dialog-titlebar.is-titleless h2 {
+      display: none;
+    }
+
+    .dialog-close {
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      padding: 0;
+      border: 0;
+      border-radius: 9px;
+      color: rgba(130, 92, 68, 0.78);
+      background: rgba(246, 221, 199, 0.58);
+      font-size: 20px;
+      line-height: 1;
+      box-shadow: none;
+    }
+
+    .dialog-close:hover {
+      color: var(--accent);
+      background: rgba(246, 221, 199, 0.9);
+      transform: none;
+    }
+
+    .dialog-content {
+      display: grid;
+      flex: 1 1 auto;
+      min-height: 0;
+      gap: 12px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding: 10px 18px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 10px 18px 18px;
+      border-top: 1px solid rgba(227, 200, 155, 0.32);
+      background: linear-gradient(180deg, rgba(255, 253, 247, 0.82), #fffdf7);
+    }
+
+    .dialog-actions[hidden] {
+      display: none;
     }
 
     .dialog-body h2 {
@@ -2088,13 +2536,6 @@
       color: var(--muted);
       font-size: 12px;
       line-height: 1;
-    }
-
-    .dialog-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 8px;
     }
 
     .review-task {
@@ -2268,6 +2709,7 @@
       }
 
       .topbar,
+      .topbar.calendar-mode,
       .status-panel,
       .day-state-strip,
       .day-state-strip.range-mode,
@@ -2344,7 +2786,12 @@
 </head>
 <body>
   <main class="app">
-    <section class="topbar" aria-label="日期控制">
+    <section class="topbar" id="topbar" aria-label="日期控制">
+      <div class="calendar-range-title" id="calendarRangeTitle" aria-label="日历筛选">
+        <button type="button" id="calendarAllBtn">全部</button>
+        <select id="calendarYearSelect" aria-label="选择年份"></select>
+        <select id="calendarMonthSelect" aria-label="选择月份"></select>
+      </div>
       <div class="segmented" role="tablist" aria-label="快速切换日期">
         <button type="button" id="todayBtn">今天</button>
         <button type="button" id="tomorrowBtn">本周</button>
@@ -2354,18 +2801,27 @@
         <input type="date" id="rangeStart" aria-label="开始日期">
         <span>至</span>
         <input type="date" id="rangeEnd" aria-label="结束日期">
+        <button type="button" class="ghost range-helper" id="allTimeBtn">全部</button>
       </div>
 
       <div class="top-actions">
-        <button type="button" class="ghost" id="showAllBtn">全部记录</button>
+        <button type="button" class="ghost" id="showAllBtn">日历</button>
+        <button type="button" class="ghost account-button" id="accountCenterBtn" title="个人中心">个人中心</button>
       </div>
+    </section>
+
+    <section class="day-state-strip" id="dayStateStrip" aria-label="整体状态记录">
+      <div class="state-strip-title" id="stateStripTitle"></div>
+      <div class="mood-summary" id="moodSummary"></div>
+      <div class="thought-summary" id="thoughtSummary"></div>
+      <button class="ghost" type="button" id="openDayStateBtn">记录</button>
     </section>
 
     <section class="ddl-strip" aria-label="DDL 项目">
       <div class="section-title">
         <span>DDL 项目</span>
         <span>
-          <button class="ghost" type="button" id="manageProjectsBtn">管理全部项目</button>
+          <button class="ghost" type="button" id="manageProjectsBtn">全部项目</button>
           <span id="projectHint"></span>
         </span>
       </div>
@@ -2378,12 +2834,6 @@
     </section>
 
     <section class="main-content" id="dailyView">
-      <section class="day-state-strip" id="dayStateStrip" aria-label="整体状态记录">
-        <div class="mood-summary" id="moodSummary"></div>
-        <div class="thought-summary" id="thoughtSummary"></div>
-        <button class="ghost" type="button" id="openDayStateBtn">记录状态</button>
-      </section>
-
       <section class="status-panel" aria-label="复盘统计">
         <button class="metric-button active" type="button" id="totalMetricBtn" data-rating-filter="all">
           <span>记录数</span>
@@ -2401,6 +2851,10 @@
           <span>保底完成</span>
           <strong id="pendingCount">0</strong>
         </button>
+        <button class="metric-button" type="button" id="unplannedMetricBtn" data-rating-filter="unplanned">
+          <span>计划外</span>
+          <strong id="unplannedCount">0</strong>
+        </button>
         <button class="metric-button" type="button" id="focusTimeBtn">
           <span>累计时间</span>
           <strong id="focusTime">0m</strong>
@@ -2409,7 +2863,6 @@
 
       <section class="todo-panel" aria-label="事件清单">
         <div class="todo-tools">
-          <button class="ghost" type="button" id="toggleTodoViewBtn">项目视图</button>
           <button class="ghost" type="button" id="resetSortBtn">默认排序</button>
         </div>
         <table id="taskTable">
@@ -2549,15 +3002,15 @@
           </div>
         </div>
         <fieldset class="rating-options compact-rating">
-          <legend>达成感</legend>
-          <label><input type="radio" name="taskRating" value="baseline">🌱 保底完成</label>
-          <label><input type="radio" name="taskRating" value="partial">🌤 有所推进</label>
-          <label><input type="radio" name="taskRating" value="full" checked>🌟 圆满完成</label>
+          <legend>完成情况</legend>
+          <label><input type="radio" name="taskRating" value="baseline">🤲 保底完成</label>
+          <label><input type="radio" name="taskRating" value="partial">👏 有所推进</label>
+          <label><input type="radio" name="taskRating" value="full" checked>🎉 圆满完成</label>
+          <label><input type="radio" name="taskRating" value="unplanned">✨ 计划外</label>
         </fieldset>
         <input id="taskNote" type="text" placeholder="备注，可选">
       </div>
       <div class="dialog-actions">
-        <button class="ghost" type="button" id="taskCancelBtn">取消</button>
         <button class="primary" type="submit">保存</button>
       </div>
     </form>
@@ -2588,7 +3041,6 @@
         </div>
       </section>
       <div class="dialog-actions">
-        <button class="ghost" type="button" id="projectListCloseBtn">关闭</button>
         <button class="primary" type="button" id="projectListAddBtn">合并项目</button>
       </div>
     </div>
@@ -2596,15 +3048,14 @@
 
   <dialog id="dayStateDialog">
     <form class="dialog-body" id="dayStateForm" method="dialog">
-      <h2 id="dayStateTitle">记录今日状态</h2>
+      <h2 id="dayStateTitle">记录整体状态</h2>
       <fieldset class="mood-picker" id="moodPicker"></fieldset>
       <div class="field">
-        <label for="thoughtText">想法记录</label>
+        <label for="thoughtText">想法</label>
         <textarea id="thoughtText" placeholder="写点今天想留下的话，可以用 emoji"></textarea>
       </div>
       <div class="thought-list" id="thoughtList"></div>
       <div class="dialog-actions">
-        <button class="ghost" type="button" id="dayStateCancelBtn">取消</button>
         <button class="primary" type="submit">保存</button>
       </div>
     </form>
@@ -2614,9 +3065,16 @@
     <div class="dialog-body">
       <h2 id="noteDetailTitle">状态记录</h2>
       <div class="note-detail-body" id="noteDetailBody"></div>
-      <div class="dialog-actions">
-        <button class="primary" type="button" id="noteDetailCloseBtn">关闭</button>
-      </div>
+
+    </div>
+  </dialog>
+
+  <dialog id="thoughtPreviewDialog">
+    <div class="dialog-body">
+      <h2 id="thoughtPreviewTitle">完整想法</h2>
+      <div class="thought-preview-meta" id="thoughtPreviewMeta"></div>
+      <div class="thought-preview-content" id="thoughtPreviewContent"></div>
+
     </div>
   </dialog>
 
@@ -2630,7 +3088,7 @@
         </div>
         <div class="pie-legend" id="pieLegend"></div>
       </div>
-      <div class="dialog-actions">
+      <div class="dialog-actions" hidden>
         <button class="primary" type="button" id="timePieCloseBtn">关闭</button>
       </div>
     </div>
@@ -2645,7 +3103,7 @@
     state.rangeStart = state.selectedDate;
     state.rangeEnd = "";
     state.viewMode = "date";
-    state.todoListView = localStorage.getItem("daily-todo-list-view") || "time";
+    state.todoListView = "time";
     state.projectListCollapsed = parseStoredJson("daily-project-list-collapsed-v3", {});
     state.editingProjectId = null;
     state.editingTaskId = null;
@@ -2659,13 +3117,24 @@
     state.editingDayStateDate = "";
     state.account = normalizeAccount(state.account);
     state.calendarAnchorDate = "";
+    state.calendarFilterYear = "";
+    state.calendarFilterMonth = "";
+    state.preCalendarContext = null;
+    state.projectFilterKey = "";
     state.pendingSyncAction = "";
+    state.projectClickTimer = 0;
 
     const els = {
+      topbar: document.querySelector("#topbar"),
+      calendarRangeTitle: document.querySelector("#calendarRangeTitle"),
+      calendarAllBtn: document.querySelector("#calendarAllBtn"),
+      calendarYearSelect: document.querySelector("#calendarYearSelect"),
+      calendarMonthSelect: document.querySelector("#calendarMonthSelect"),
       todayBtn: document.querySelector("#todayBtn"),
       tomorrowBtn: document.querySelector("#tomorrowBtn"),
       rangeStart: document.querySelector("#rangeStart"),
       rangeEnd: document.querySelector("#rangeEnd"),
+      allTimeBtn: document.querySelector("#allTimeBtn"),
       showAllBtn: document.querySelector("#showAllBtn"),
       accountCenterBtn: document.querySelector("#accountCenterBtn"),
       accountBackdrop: document.querySelector("#accountBackdrop"),
@@ -2697,6 +3166,7 @@
       addProjectBtn: document.querySelector("#addProjectBtn"),
       dailyView: document.querySelector("#dailyView"),
       dayStateStrip: document.querySelector("#dayStateStrip"),
+      stateStripTitle: document.querySelector("#stateStripTitle"),
       moodSummary: document.querySelector("#moodSummary"),
       thoughtSummary: document.querySelector("#thoughtSummary"),
       openDayStateBtn: document.querySelector("#openDayStateBtn"),
@@ -2706,16 +3176,19 @@
       moodPicker: document.querySelector("#moodPicker"),
       thoughtText: document.querySelector("#thoughtText"),
       thoughtList: document.querySelector("#thoughtList"),
-      dayStateCancelBtn: document.querySelector("#dayStateCancelBtn"),
       noteDetailDialog: document.querySelector("#noteDetailDialog"),
       noteDetailTitle: document.querySelector("#noteDetailTitle"),
       noteDetailBody: document.querySelector("#noteDetailBody"),
-      noteDetailCloseBtn: document.querySelector("#noteDetailCloseBtn"),
+      thoughtPreviewDialog: document.querySelector("#thoughtPreviewDialog"),
+      thoughtPreviewTitle: document.querySelector("#thoughtPreviewTitle"),
+      thoughtPreviewMeta: document.querySelector("#thoughtPreviewMeta"),
+      thoughtPreviewContent: document.querySelector("#thoughtPreviewContent"),
       calendarView: document.querySelector("#calendarView"),
       calendarTitle: document.querySelector("#calendarTitle"),
       calendarGrid: document.querySelector("#calendarGrid"),
       totalCount: document.querySelector("#totalCount"),
       pendingCount: document.querySelector("#pendingCount"),
+      unplannedCount: document.querySelector("#unplannedCount"),
       doneCount: document.querySelector("#doneCount"),
       doneRate: document.querySelector("#doneRate"),
       metricButtons: document.querySelectorAll("[data-rating-filter]"),
@@ -2737,7 +3210,6 @@
       projectCancelBtn: document.querySelector("#projectCancelBtn"),
       projectListDialog: document.querySelector("#projectListDialog"),
       projectListBody: document.querySelector("#projectListBody"),
-      projectListCloseBtn: document.querySelector("#projectListCloseBtn"),
       projectListAddBtn: document.querySelector("#projectListAddBtn"),
       projectMergePanel: document.querySelector("#projectMergePanel"),
       mergeSourceProjects: document.querySelector("#mergeSourceProjects"),
@@ -2765,6 +3237,108 @@
 
     init();
 
+    function attachBackdropClose(dialog) {
+      if (!dialog) return;
+    }
+
+    function normalizeDialogChrome(dialog) {
+      if (!dialog) return;
+      const body = dialog.querySelector(".dialog-body");
+      if (!body || body.dataset.chromeReady === "true") return;
+      const title = body.querySelector(":scope > h2");
+      const actions = body.querySelector(":scope > .dialog-actions");
+      const titlebar = document.createElement("div");
+      titlebar.className = "dialog-titlebar";
+      if (dialog.id === "thoughtPreviewDialog") titlebar.classList.add("is-titleless");
+      if (title) {
+        titlebar.append(title);
+      } else {
+        const spacer = document.createElement("span");
+        titlebar.append(spacer);
+      }
+      const closeButton = document.createElement("button");
+      closeButton.className = "dialog-close";
+      closeButton.type = "button";
+      closeButton.setAttribute("aria-label", "关闭弹窗");
+      closeButton.textContent = "×";
+      closeButton.addEventListener("click", () => dialog.close());
+      titlebar.append(closeButton);
+      body.prepend(titlebar);
+
+      const content = document.createElement("div");
+      content.className = "dialog-content";
+      const children = Array.from(body.children).filter((child) => child !== titlebar && child !== actions);
+      children.forEach((child) => content.append(child));
+      if (actions) body.insertBefore(content, actions);
+      else body.append(content);
+      body.dataset.chromeReady = "true";
+    }
+
+    function makeDialogMovable(dialog) {
+      if (!dialog) return;
+      dialog.addEventListener("mousedown", (event) => {
+        if (event.button !== 0) return;
+        const handle = event.target.closest(".dialog-titlebar");
+        if (!handle || event.target.closest("button, input, select, textarea, label")) return;
+        const rect = dialog.getBoundingClientRect();
+        const startX = event.clientX;
+        const startY = event.clientY;
+        const offsetX = startX - rect.left;
+        const offsetY = startY - rect.top;
+        let moved = false;
+        function onMove(moveEvent) {
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
+          if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+          if (!moved) return;
+          const maxLeft = Math.max(8, window.innerWidth - dialog.offsetWidth - 8);
+          const maxTop = Math.max(8, window.innerHeight - dialog.offsetHeight - 8);
+          const nextLeft = Math.min(Math.max(8, moveEvent.clientX - offsetX), maxLeft);
+          const nextTop = Math.min(Math.max(8, moveEvent.clientY - offsetY), maxTop);
+          dialog.classList.add("is-dragged");
+          dialog.style.left = `${nextLeft}px`;
+          dialog.style.top = `${nextTop}px`;
+        }
+        function onUp() {
+          document.removeEventListener("mousemove", onMove);
+          document.removeEventListener("mouseup", onUp);
+        }
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+    }
+
+    function prepareDialog(dialog) {
+      normalizeDialogChrome(dialog);
+      attachBackdropClose(dialog);
+      makeDialogMovable(dialog);
+      makeDialogResizable(dialog);
+    }
+
+    function makeDialogResizable(dialog) {
+      if (!dialog || dialog.dataset.resizeReady === "true") return;
+      dialog.dataset.resizeReady = "true";
+      const nativeShowModal = dialog.showModal.bind(dialog);
+      dialog.showModal = (...args) => {
+        nativeShowModal(...args);
+        requestAnimationFrame(() => {
+          const rect = dialog.getBoundingClientRect();
+          const maxWidth = Math.max(320, window.innerWidth - 28);
+          const maxHeight = Math.max(220, window.innerHeight - 28);
+          if (!dialog.dataset.userSized) {
+            dialog.style.width = `${Math.min(rect.width, maxWidth)}px`;
+            dialog.style.height = `${Math.min(rect.height, maxHeight)}px`;
+          }
+        });
+      };
+      dialog.addEventListener("mousedown", (event) => {
+        const rect = dialog.getBoundingClientRect();
+        const nearRight = event.clientX >= rect.right - 22;
+        const nearBottom = event.clientY >= rect.bottom - 22;
+        if (nearRight || nearBottom) dialog.dataset.userSized = "true";
+      }, true);
+    }
+
     function init() {
       els.rangeStart.value = state.selectedDate;
 
@@ -2772,8 +3346,12 @@
       els.tomorrowBtn.addEventListener("click", selectWeekToDate);
       els.rangeStart.addEventListener("change", updateDateControls);
       els.rangeEnd.addEventListener("change", updateDateControls);
-      els.showAllBtn.addEventListener("click", toggleAll);
-      if (els.accountCenterBtn) els.accountCenterBtn.addEventListener("click", openAccountDrawer);
+      els.allTimeBtn.addEventListener("click", selectAllTime);
+      els.showAllBtn.addEventListener("click", toggleCalendarView);
+      els.calendarAllBtn.addEventListener("click", selectCalendarAll);
+      els.calendarYearSelect.addEventListener("change", handleCalendarYearChange);
+      els.calendarMonthSelect.addEventListener("change", handleCalendarMonthChange);
+      els.accountCenterBtn.addEventListener("click", openAccountDrawer);
       els.accountCloseBtn.addEventListener("click", closeAccountDrawer);
       els.accountBackdrop.addEventListener("click", closeAccountDrawer);
       els.activateProBtn.addEventListener("click", activateProAccount);
@@ -2794,12 +3372,16 @@
       els.thoughtList.addEventListener("click", handleThoughtListAction);
       els.thoughtList.addEventListener("dblclick", handleThoughtInlineEdit);
       els.thoughtList.addEventListener("contextmenu", handleThoughtInlineEdit);
-      els.dayStateCancelBtn.addEventListener("click", () => els.dayStateDialog.close());
       els.noteDetailBody.addEventListener("click", handleThoughtListAction);
       els.noteDetailBody.addEventListener("mouseover", scheduleHoverTooltip);
       els.noteDetailBody.addEventListener("mousemove", moveHoverTooltip);
       els.noteDetailBody.addEventListener("mouseout", hideHoverTooltip);
-      els.noteDetailCloseBtn.addEventListener("click", () => els.noteDetailDialog.close());
+      prepareDialog(els.dayStateDialog);
+      prepareDialog(els.noteDetailDialog);
+      prepareDialog(els.thoughtPreviewDialog);
+      prepareDialog(els.projectDialog);
+      prepareDialog(els.taskDialog);
+      prepareDialog(els.timePieDialog);
 
       els.projectRail.addEventListener("click", handleProjectRailClick);
       els.projectRail.addEventListener("dblclick", editProjectField);
@@ -2811,7 +3393,7 @@
       els.projectListBody.addEventListener("click", handleProjectListClick);
       els.projectListBody.addEventListener("dblclick", editProjectField);
       els.projectListBody.addEventListener("contextmenu", editProjectField);
-      els.projectListCloseBtn.addEventListener("click", () => els.projectListDialog.close());
+      prepareDialog(els.projectListDialog);
       els.projectListAddBtn.addEventListener("click", () => {
         state.mergePanelOpen = !state.mergePanelOpen;
         renderProjectListDialog();
@@ -2819,7 +3401,7 @@
       els.mergeConfirmBtn.addEventListener("click", mergeProjects);
       els.mergeUndoBtn.addEventListener("click", undoLastMerge);
 
-      els.toggleTodoViewBtn.addEventListener("click", toggleTodoListView);
+      if (els.toggleTodoViewBtn) els.toggleTodoViewBtn.addEventListener("click", toggleTodoListView);
       els.taskHead.addEventListener("click", handleHeaderSort);
       els.taskBody.addEventListener("click", handleTaskClick);
       els.taskBody.addEventListener("mouseover", scheduleHoverTooltip);
@@ -2828,12 +3410,8 @@
       els.taskBody.addEventListener("dblclick", editTaskField);
       els.taskBody.addEventListener("contextmenu", editTaskField);
       els.resetSortBtn.addEventListener("click", resetDefaultSort);
-      els.taskBody.addEventListener("dragstart", handleDragStart);
-      els.taskBody.addEventListener("dragover", handleDragOver);
-      els.taskBody.addEventListener("drop", handleDrop);
-      els.taskBody.addEventListener("dragend", handleDragEnd);
       els.taskForm.addEventListener("submit", saveTask);
-      els.taskCancelBtn.addEventListener("click", () => els.taskDialog.close());
+      if (els.taskCancelBtn) els.taskCancelBtn.addEventListener("click", () => els.taskDialog.close());
       els.metricButtons.forEach((button) => button.addEventListener("click", () => setRatingFilter(button.dataset.ratingFilter || "all")));
       els.focusTimeBtn.addEventListener("click", openTimePie);
       els.timePieCloseBtn.addEventListener("click", () => els.timePieDialog.close());
@@ -3045,6 +3623,7 @@
 
       state.ratingFilter = "all";
       state.viewMode = state.rangeEnd ? "range" : "date";
+      state.preCalendarContext = null;
       render();
     }
 
@@ -3054,6 +3633,7 @@
       state.rangeEnd = "";
       state.ratingFilter = "all";
       state.viewMode = "date";
+      state.preCalendarContext = null;
       els.rangeStart.value = date;
       els.rangeEnd.value = "";
       render();
@@ -3067,6 +3647,7 @@
       state.rangeEnd = today;
       state.ratingFilter = "all";
       state.viewMode = "range";
+      state.preCalendarContext = null;
       els.rangeStart.value = start;
       els.rangeEnd.value = today;
       render();
@@ -3084,23 +3665,63 @@
       render();
     }
 
-    function toggleAll() {
-      if (state.viewMode === "calendar") {
-        selectSingleDate(formatDate(new Date()));
-        return;
-      }
+    function selectAllTime() {
       const today = formatDate(new Date());
-      const dates = getAllRecordDates();
-      const firstDate = dates.find((date) => date <= today) || today;
+      const firstDate = getFirstRecordDate(today);
       state.rangeStart = firstDate;
       state.rangeEnd = today;
       state.selectedDate = today;
-      state.calendarAnchorDate = today;
+      state.ratingFilter = "all";
+      state.viewMode = firstDate === today ? "date" : "range";
+      state.preCalendarContext = null;
+      els.rangeStart.value = state.rangeStart;
+      els.rangeEnd.value = firstDate === today ? "" : state.rangeEnd;
+      render();
+    }
+
+    function toggleCalendarView() {
+      if (state.viewMode === "calendar") {
+        const context = state.preCalendarContext;
+        if (context) {
+          state.selectedDate = context.selectedDate;
+          state.rangeStart = context.rangeStart;
+          state.rangeEnd = context.rangeEnd;
+          state.viewMode = context.viewMode;
+          els.rangeStart.value = state.rangeStart;
+          els.rangeEnd.value = state.rangeEnd;
+        } else {
+          selectSingleDate(formatDate(new Date()));
+          return;
+        }
+        state.preCalendarContext = null;
+        state.ratingFilter = "all";
+        render();
+        return;
+      }
+
+      const today = formatDate(new Date());
+      state.preCalendarContext = {
+        selectedDate: state.selectedDate,
+        rangeStart: state.rangeStart,
+        rangeEnd: state.rangeEnd,
+        viewMode: state.viewMode
+      };
+      state.rangeStart = getFirstRecordDate(today);
+      state.rangeEnd = today;
+      state.selectedDate = today;
+      state.calendarAnchorDate = "";
+      state.calendarFilterYear = String(new Date(`${today}T00:00:00`).getFullYear());
+      state.calendarFilterMonth = String(new Date(`${today}T00:00:00`).getMonth() + 1);
       state.ratingFilter = "all";
       state.viewMode = "calendar";
       els.rangeStart.value = state.rangeStart;
       els.rangeEnd.value = state.rangeEnd;
       render();
+    }
+
+    function getFirstRecordDate(fallback) {
+      const dates = getAllRecordDates().filter((date) => date <= fallback);
+      return dates[0] || fallback;
     }
 
     function getAllRecordDates() {
@@ -3116,23 +3737,29 @@
     function handleProjectRailClick(event) {
       const button = event.target.closest("button[data-project-action]");
       const card = event.target.closest("[data-project-id]");
+      const filterCard = event.target.closest("[data-project-filter-key]");
 
-      if (event.target.closest("[data-open-project-list]")) {
-        openProjectList();
+      if (button && card) {
+        const project = findProject(card.dataset.projectId);
+        if (!project) return;
+        if (button.dataset.projectAction === "delete") deleteProject(project);
         return;
       }
 
-
-      if (!button || !card) return;
-      const project = findProject(card.dataset.projectId);
-      if (!project) return;
-
-      if (button.dataset.projectAction === "delete") {
-        deleteProject(project);
+      if (filterCard && !event.target.closest("input, select, textarea") && !event.target.closest("button[data-project-action]") && !event.target.closest("[data-project-field] select")) {
+        const key = filterCard.dataset.projectFilterKey || "";
+        clearTimeout(state.projectClickTimer);
+        state.projectClickTimer = setTimeout(() => {
+          state.projectFilterKey = state.projectFilterKey === key ? "" : key;
+          state.ratingFilter = "all";
+          render();
+        }, 220);
       }
     }
 
     function editProjectField(event) {
+      clearTimeout(state.projectClickTimer);
+      if (state.viewMode === "calendar") return;
       if (event.target.closest("button")) return;
       const fieldEl = event.target.closest("[data-project-field]");
       const card = event.target.closest("[data-project-id]");
@@ -3226,7 +3853,25 @@
       modeSelect.focus();
     }
 
+    function startProjectNameEdit(projectId) {
+      const project = findProject(projectId);
+      const card = Array.from(els.projectRail.querySelectorAll("[data-project-id]"))
+        .find((item) => item.dataset.projectId === projectId);
+      const fieldEl = card ? card.querySelector('[data-project-field="name"]') : null;
+      if (!project || !fieldEl) return;
+      startInlineEdit(fieldEl, {
+        type: "text",
+        value: project.name,
+        save: (value) => { project.name = value.trim() || "未命名"; }
+      }, () => {
+        saveData();
+        render();
+        if (els.projectListDialog.open) renderProjectListDialog();
+      });
+    }
+
     function createDefaultProject() {
+      if (state.viewMode === "calendar") return null;
       const hasUnnamed = state.projects.some(isUnnamedProject);
       if (hasUnnamed && !window.confirm("还有未命名项目未处理，仍要继续添加吗？")) return null;
       const project = {
@@ -3239,6 +3884,7 @@
       state.projects.push(project);
       saveData();
       render();
+      requestAnimationFrame(() => startProjectNameEdit(project.id));
       return project;
     }
 
@@ -3286,6 +3932,8 @@
     }
 
     function renderProjectListDialog() {
+      const viewOnly = state.viewMode === "calendar";
+      els.projectListDialog.classList.toggle("is-view-only", viewOnly);
       const draftProjects = state.projects.filter(isDraftProject).sort(compareProjects);
       const groups = getProjectListGroups();
       setDefaultProjectListCollapse(draftProjects.length);
@@ -3342,20 +3990,25 @@
     }
 
     function projectListItem(project) {
-      const ddl = hasProjectDdl(project) ? friendlyDate(project.ddl) : (getProjectScheduleMode(project) === "plannedLater" ? "还没想好" : "未安排");
+      const viewOnly = state.viewMode === "calendar";
+      const ddl = hasProjectDdl(project) ? friendlyDate(project.ddl) : (getProjectScheduleMode(project) === "plannedLater" ? "还没想好" : "设置日期");
       return `
-        <div class="project-list-item" data-project-id="${project.id}" title="双击或右键修改项目">
-          <div class="project-name" data-project-field="name" title="双击或右键修改项目名称">${escapeHtml(project.name)}</div>
-          <div class="project-ddl" data-project-field="ddl" title="双击或右键修改 DDL">${ddl}</div>
-          <div class="project-card-actions">
+        <div class="project-list-item ${viewOnly ? "is-readonly" : ""}" data-project-id="${project.id}" title="${viewOnly ? "查看项目" : "双击或右键修改项目"}">
+          <div class="project-name" data-project-field="name" title="${viewOnly ? "查看项目名称" : "双击或右键修改项目名称"}">${escapeHtml(project.name)}</div>
+          <div class="project-ddl" data-project-field="ddl" title="${viewOnly ? "查看 DDL" : "双击或右键修改 DDL"}">${ddl}</div>
+          ${viewOnly ? "" : `<div class="project-card-actions">
             <button class="icon-button" type="button" data-project-action="delete" title="删除项目" aria-label="删除项目">×</button>
-          </div>
+          </div>`}
         </div>
       `;
     }
 
     function renderMergePanel() {
-      els.projectMergePanel.hidden = !state.mergePanelOpen;
+      const viewOnly = state.viewMode === "calendar";
+      if (viewOnly) state.mergePanelOpen = false;
+      els.projectMergePanel.hidden = viewOnly || !state.mergePanelOpen;
+      els.projectListAddBtn.hidden = viewOnly;
+      if (viewOnly) return;
       els.projectListAddBtn.textContent = state.mergePanelOpen ? "收起合并" : "合并项目";
       const options = state.projects
         .slice()
@@ -3421,6 +4074,7 @@
         return;
       }
 
+      if (state.viewMode === "calendar") return;
       const button = event.target.closest("button[data-project-action]");
       const row = event.target.closest("[data-project-id]");
       if (!button || !row) return;
@@ -3483,7 +4137,7 @@
       els.taskRating.forEach((input) => {
         input.checked = input.value === (task ? task.completionRating || "full" : "full");
       });
-      renderProjectOptions(els.taskProject, task ? task.projectId || "" : "");
+      renderProjectOptions(els.taskProject, task ? task.projectId || "" : getDefaultTaskProjectId());
       els.taskDialog.showModal();
       els.taskText.focus();
     }
@@ -3525,6 +4179,12 @@
       return formatDate(new Date());
     }
 
+    function getDefaultTaskProjectId() {
+      return state.projectFilterKey && state.projectFilterKey !== "__planned_later__" && findProject(state.projectFilterKey)
+        ? state.projectFilterKey
+        : "";
+    }
+
     function getCurrentTimeBucket() {
       const hour = new Date().getHours();
       if (hour < 12) return "morning";
@@ -3542,11 +4202,13 @@
     function scheduleHoverTooltip(event) {
       const target = event.target.closest("[data-tooltip]");
       const inTooltipArea = els.taskBody.contains(target) || els.thoughtSummary.contains(target) || els.noteDetailBody.contains(target);
-      if (!target || !inTooltipArea || (!target.dataset.tooltipAlways && !isTextOverflowing(target))) return;
+      if (!target || !inTooltipArea || !shouldShowHoverTooltip(target)) return;
       tooltipTarget = target;
       clearTimeout(tooltipTimer);
       tooltipTimer = setTimeout(() => {
-        if (tooltipTarget !== target || (!target.dataset.tooltipAlways && !isTextOverflowing(target))) return;
+        if (tooltipTarget !== target || !shouldShowHoverTooltip(target)) return;
+        const tooltipHost = els.noteDetailBody.contains(target) ? els.noteDetailDialog.querySelector(".dialog-body") : document.body;
+        if (tooltipHost && els.hoverTooltip.parentElement !== tooltipHost) tooltipHost.appendChild(els.hoverTooltip);
         els.hoverTooltip.textContent = target.dataset.tooltip;
         els.hoverTooltip.hidden = false;
         positionHoverTooltip(event);
@@ -3556,6 +4218,13 @@
 
     function isTextOverflowing(element) {
       return element.scrollWidth > element.clientWidth + 1;
+    }
+
+    function shouldShowHoverTooltip(element) {
+      if (element.dataset.tooltipAlways) return true;
+      if (isTextOverflowing(element)) return true;
+      if (element.dataset.tooltipThought) return (element.textContent || "").trim().length > 28;
+      return false;
     }
 
     function moveHoverTooltip(event) {
@@ -3582,9 +4251,15 @@
       let top;
 
       if (targetRect && els.noteDetailBody.contains(target)) {
-        left = targetRect.left;
-        top = targetRect.top - tooltipRect.height - offset;
-        if (top < 12) top = targetRect.bottom + offset;
+        const dialogRect = els.noteDetailDialog.getBoundingClientRect();
+        const minLeft = dialogRect.left + 18;
+        const maxLeft = dialogRect.right - tooltipRect.width - 18;
+        const minTop = dialogRect.top + 18;
+        const maxTop = dialogRect.bottom - tooltipRect.height - 18;
+        left = Math.min(Math.max(targetRect.left, minLeft), Math.max(minLeft, maxLeft));
+        const below = targetRect.bottom + offset;
+        const above = targetRect.top - tooltipRect.height - offset;
+        top = below <= maxTop ? below : Math.min(Math.max(above, minTop), Math.max(minTop, maxTop));
       } else {
         left = event.clientX + offset;
         top = event.clientY + offset;
@@ -3597,7 +4272,7 @@
     }
 
     function editTaskField(event) {
-      if (event.target.closest("button")) return;
+      if (event.target.closest("button, input, select, textarea")) return;
       const fieldEl = event.target.closest("[data-task-field]");
       const row = event.target.closest("tr[data-task-id]");
       if (!fieldEl || !row) return;
@@ -3607,21 +4282,235 @@
       event.preventDefault();
 
       const configByField = {
-        text: { type: "text", value: task.text || "", save: (value) => { task.text = value.trim() || "未命名"; } },
-        note: { type: "text", value: task.note || "", save: (value) => { task.note = value.trim(); } },
-        projectId: { type: "select", value: task.projectId || "", optionsHtml: projectOptionsHtml(task.projectId || ""), save: (value) => { task.projectId = value; } },
-        timeBucket: { type: "select", value: getTaskDisplayBucket(task), optionsHtml: timeBucketOptionsHtml(getTaskDisplayBucket(task)), save: (value) => { task.timeBucket = normalizeTimeBucket(value) || "morning"; task.plannedStart = ""; task.manualOrder = false; } },
-        targetDate: { type: "date", value: task.targetDate || formatDate(new Date()), save: (value) => { task.targetDate = isValidDateString(value) ? value : formatDate(new Date()); task.completedDate = task.targetDate; } },
-        durationMinutes: { type: "number", value: task.durationMinutes || "", save: (value) => { task.durationMinutes = Math.max(0, Number.parseInt(value || "0", 10) || 0); } },
-        completionRating: { type: "select", value: task.completionRating || "full", optionsHtml: ratingOptionsHtml(task.completionRating || "full"), save: (value) => { task.completionRating = value || "full"; } }
+        text: { type: "textarea", label: "事件", rows: 5, value: task.text || "", save: (value) => { task.text = value.trim() || "未命名"; } },
+        note: { type: "textarea", label: "备注", rows: 6, value: task.note || "", save: (value) => { task.note = value.trim(); } },
+        projectId: { type: "project", label: "归属项目", width: 300, value: task.projectId || "", save: (value) => { task.projectId = value; } },
+        timeBucket: { type: "timeBucket", label: "时间", width: 220, value: getTaskDisplayBucket(task), save: (value) => { task.timeBucket = normalizeTimeBucket(value) || "morning"; task.plannedStart = ""; task.manualOrder = false; } },
+        targetDate: { type: "date", label: "日期", value: task.targetDate || formatDate(new Date()), save: (value) => { task.targetDate = isValidDateString(value) ? value : formatDate(new Date()); task.completedDate = task.targetDate; } },
+        durationMinutes: { type: "duration", label: "投入时间", width: 260, value: task.durationMinutes || "", save: (value) => { task.durationMinutes = Math.max(0, Number.parseInt(value || "0", 10) || 0); } },
+        completionRating: { type: "rating", label: "完成情况", width: 280, value: task.completionRating || "full", save: (value) => { task.completionRating = value || "full"; } }
       };
       const config = configByField[field];
       if (!config) return;
 
-      startInlineEdit(fieldEl, config, () => {
+      const afterSave = () => {
         saveData();
         render();
+      };
+
+      if (["textarea", "date"].includes(config.type)) {
+        openTaskFieldDialog(config, afterSave);
+      } else {
+        openTaskQuickMenu(fieldEl, config, afterSave);
+      }
+    }
+
+    function getTaskFieldDialog() {
+      let dialog = document.getElementById("taskFieldDialog");
+      if (dialog) return dialog;
+      dialog = document.createElement("dialog");
+      dialog.id = "taskFieldDialog";
+      dialog.className = "task-field-dialog";
+      dialog.innerHTML = `
+        <form class="dialog-body" id="taskFieldForm" novalidate>
+          <h2 id="taskFieldTitle">修改</h2>
+          <div id="taskFieldBody"></div>
+          <div class="dialog-actions"><button class="primary" type="submit">保存</button></div>
+        </form>
+      `;
+      document.body.append(dialog);
+      prepareDialog(dialog);
+      dialog.addEventListener("close", () => {
+        const body = dialog.querySelector("#taskFieldBody");
+        body?.replaceChildren();
       });
+      return dialog;
+    }
+
+    function openTaskFieldDialog(config, afterSave) {
+      closeTaskFieldPopover();
+      const dialog = getTaskFieldDialog();
+      const title = dialog.querySelector(".dialog-titlebar h2") || dialog.querySelector("#taskFieldTitle");
+      const body = dialog.querySelector("#taskFieldBody");
+      const form = dialog.querySelector("#taskFieldForm");
+      if (!title || !body || !form) return;
+      title.textContent = config.label || "修改";
+      body.replaceChildren();
+
+      let getValue;
+      let focusTarget;
+      if (config.type === "date") {
+        const currentYear = new Date().getFullYear();
+        const editor = createDatePartsEditor(config.value || formatDate(new Date()), {
+          className: "inline-date-editor task-date-editor",
+          startYear: currentYear - 10,
+          endYear: currentYear + 10
+        });
+        body.append(editor.el);
+        getValue = editor.getValue;
+        focusTarget = () => editor.focus();
+      } else {
+        const control = document.createElement("textarea");
+        control.className = "field-edit-control";
+        control.rows = config.rows || 5;
+        control.value = config.value || "";
+        control.placeholder = config.label || "输入";
+        body.append(control);
+        getValue = () => control.value;
+        focusTarget = () => {
+          control.focus();
+          control.select();
+        };
+      }
+
+      form.onsubmit = (event) => {
+        event.preventDefault();
+        config.save(getValue());
+        afterSave();
+        dialog.close();
+      };
+
+      if (!dialog.open) dialog.showModal();
+      requestAnimationFrame(() => focusTarget?.());
+    }
+
+    function closeTaskFieldPopover() {
+      const popover = document.querySelector(".field-edit-popover");
+      if (!popover) return;
+      popover.remove();
+      document.removeEventListener("mousedown", handleTaskPopoverOutside, true);
+      document.removeEventListener("keydown", handleTaskPopoverKeydown, true);
+      window.removeEventListener("resize", handleTaskPopoverViewportChange);
+      window.removeEventListener("scroll", handleTaskPopoverViewportChange, true);
+    }
+
+    function handleTaskPopoverViewportChange() {
+      closeTaskFieldPopover();
+    }
+
+    function handleTaskPopoverKeydown(event) {
+      if (event.key === "Escape") closeTaskFieldPopover();
+    }
+
+    function handleTaskPopoverOutside(event) {
+      const popover = document.querySelector(".field-edit-popover");
+      if (!popover || popover.contains(event.target) || event.target.closest("[data-task-field]")) return;
+      closeTaskFieldPopover();
+    }
+
+    function openTaskQuickMenu(fieldEl, config, afterSave) {
+      closeTaskFieldPopover();
+      const popover = document.createElement("div");
+      popover.className = "field-edit-popover quick-menu";
+      popover.style.setProperty("--popover-width", `${config.width || 280}px`);
+
+      const saveAndClose = (value) => {
+        config.save(value);
+        closeTaskFieldPopover();
+        afterSave();
+      };
+
+      const label = document.createElement("label");
+      label.textContent = config.label || "修改";
+      popover.append(label);
+
+      if (config.type === "timeBucket") {
+        [
+          ["morning", "上午"],
+          ["afternoon", "下午"],
+          ["evening", "晚上"]
+        ].forEach(([value, text]) => popover.append(createQuickOption(text, value, value === config.value, saveAndClose)));
+      } else if (config.type === "project") {
+        getProjectQuickOptions(config.value).forEach((option) => {
+          popover.append(createQuickOption(option.label, option.value, option.value === config.value, saveAndClose, option.meta));
+        });
+      } else if (config.type === "rating") {
+        Object.entries(getRatingMap()).forEach(([value, rating]) => {
+          popover.append(createQuickOption(`${rating.emoji} ${rating.label}`, value, value === config.value, saveAndClose));
+        });
+      } else if (config.type === "duration") {
+        const grid = document.createElement("div");
+        grid.className = "quick-duration-grid";
+        ["", 15, 30, 45, 60, 90, 120].forEach((minutes) => {
+          const label = minutes === "" ? "未填写" : formatDuration(minutes);
+          grid.append(createQuickOption(label, String(minutes), String(minutes) === String(config.value || ""), saveAndClose));
+        });
+        popover.append(grid);
+
+        const custom = document.createElement("div");
+        custom.className = "quick-custom";
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = "0";
+        input.step = "1";
+        input.inputMode = "numeric";
+        input.placeholder = "输入分钟";
+        input.value = config.value || "";
+        const ok = document.createElement("button");
+        ok.type = "button";
+        ok.className = "primary";
+        ok.textContent = "确定";
+        const submitCustom = () => saveAndClose(input.value);
+        ok.addEventListener("click", submitCustom);
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            submitCustom();
+          }
+        });
+        custom.append(input, ok);
+        popover.append(custom);
+      }
+
+      document.body.append(popover);
+      positionTaskFieldPopover(popover, fieldEl);
+      setTimeout(() => {
+        document.addEventListener("mousedown", handleTaskPopoverOutside, true);
+        document.addEventListener("keydown", handleTaskPopoverKeydown, true);
+      }, 0);
+      window.addEventListener("resize", handleTaskPopoverViewportChange);
+      window.addEventListener("scroll", handleTaskPopoverViewportChange, true);
+      const firstSelected = popover.querySelector(".quick-option.is-selected") || popover.querySelector(".quick-option") || popover.querySelector("input");
+      firstSelected?.focus();
+    }
+
+    function createQuickOption(label, value, selected, onSelect, meta = "") {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `quick-option${selected ? " is-selected" : ""}`;
+      const labelSpan = document.createElement("span");
+      labelSpan.textContent = label;
+      button.append(labelSpan);
+      if (meta) {
+        const metaSpan = document.createElement("span");
+        metaSpan.className = "quick-meta";
+        metaSpan.textContent = meta;
+        button.append(metaSpan);
+      }
+      button.addEventListener("click", () => onSelect(value));
+      return button;
+    }
+
+    function getProjectQuickOptions(selectedValue = "") {
+      const select = document.createElement("select");
+      select.innerHTML = projectOptionsHtml(selectedValue);
+      return Array.from(select.options).map((option) => ({
+        value: option.value,
+        label: option.textContent || UNASSIGNED_PROJECT,
+        meta: option.value ? "" : "默认"
+      }));
+    }
+
+    function positionTaskFieldPopover(popover, fieldEl) {
+      const rect = fieldEl.getBoundingClientRect();
+      const popRect = popover.getBoundingClientRect();
+      const gap = 8;
+      let left = rect.left;
+      let top = rect.bottom + gap;
+      if (left + popRect.width > window.innerWidth - 14) left = window.innerWidth - popRect.width - 14;
+      if (top + popRect.height > window.innerHeight - 14) top = rect.top - popRect.height - gap;
+      popover.style.left = `${Math.max(14, left)}px`;
+      popover.style.top = `${Math.max(14, top)}px`;
     }
 
     function startTimePartsEdit(fieldEl, config, afterSave) {
@@ -3795,17 +4684,12 @@
     function resetDefaultSort() {
       state.sortKey = "";
       state.sortDir = "asc";
-      if (state.todoListView === "project") {
-        state.tasks.forEach((task) => {
-          task.projectManualOrder = false;
-          task.projectOrder = 9999;
-        });
-      } else {
-        getBaseVisibleTasks().forEach((task, index) => {
-          task.manualOrder = false;
-          task.order = index + 1;
-        });
-      }
+      getBaseVisibleTasks().forEach((task, index) => {
+        task.manualOrder = false;
+        task.order = index + 1;
+        task.projectManualOrder = false;
+        task.projectOrder = 9999;
+      });
       saveData();
       render();
     }
@@ -3815,11 +4699,7 @@
       if (!row) return;
       state.draggingTaskId = row.dataset.taskId;
       state.draggingProjectKey = row.dataset.projectKey || "";
-      if (state.todoListView === "project") {
-        document.querySelectorAll(`[data-project-key="${state.draggingProjectKey}"]`).forEach((item) => item.classList.add("dragging"));
-      } else {
-        row.classList.add("dragging");
-      }
+      row.classList.add("dragging");
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("text/plain", row.dataset.taskId);
     }
@@ -3832,7 +4712,6 @@
     }
 
     function canDropOnRow(row) {
-      if (state.todoListView === "project") return true;
       const source = state.tasks.find((task) => task.id === state.draggingTaskId);
       const target = state.tasks.find((task) => task.id === row.dataset.taskId);
       if (!source || !target) return false;
@@ -3853,11 +4732,8 @@
         handleDragEnd();
         return;
       }
-      if (state.todoListView === "project") reorderProjectGroups(state.draggingProjectKey, row.dataset.projectKey);
-      else {
-        assignDraggedTaskBucket(state.draggingTaskId, row.dataset.taskId);
-        reorderVisibleTasks(state.draggingTaskId, row.dataset.taskId);
-      }
+      assignDraggedTaskBucket(state.draggingTaskId, row.dataset.taskId);
+      reorderVisibleTasks(state.draggingTaskId, row.dataset.taskId);
       saveData();
       render();
     }
@@ -3918,19 +4794,37 @@
         if (state.viewMode === "calendar" || state.viewMode === "range") return task.targetDate >= state.rangeStart && task.targetDate <= state.rangeEnd;
         return task.targetDate === state.selectedDate;
       });
-      return sortVisibleTasks(visible);
+      return sortVisibleTasks(applyProjectFilter(visible));
     }
 
     function getVisibleTasks() {
       return applyRatingFilter(getBaseVisibleTasks());
     }
 
+    function applyProjectFilter(tasks) {
+      if (!state.projectFilterKey) return tasks;
+      return tasks.filter(taskMatchesProjectFilter);
+    }
+
+    function taskMatchesProjectFilter(task) {
+      if (!state.projectFilterKey) return true;
+      if (state.projectFilterKey === "__planned_later__") {
+        const project = findProject(task.projectId);
+        return project ? isPlannedLater(project) : false;
+      }
+      return task.projectId === state.projectFilterKey;
+    }
+
+    function projectMatchesCalendarFilter(project) {
+      if (!state.projectFilterKey) return false;
+      if (state.projectFilterKey === "__planned_later__") return isPlannedLater(project);
+      return project.id === state.projectFilterKey;
+    }
+
     function sortVisibleTasks(tasks) {
       return [...tasks].sort((a, b) => {
         if (state.sortKey) return compareTasksByHeader(a, b);
-        return state.todoListView === "project"
-          ? compareProjectViewTasks(a, b, tasks)
-          : compareTasks(a, b);
+        return compareTasks(a, b);
       });
     }
 
@@ -3939,6 +4833,7 @@
       renderTopbar();
       renderProjects();
       renderAccountDrawer();
+      renderDayStateStrip();
 
       if (state.viewMode === "calendar") {
         els.dailyView.classList.add("is-hidden");
@@ -3962,22 +4857,23 @@
         els.dayStateStrip.classList.remove("range-mode");
         els.dayStateStrip.style.setProperty("--mood-bg", mood.bg);
         els.dayStateStrip.style.setProperty("--mood-color", mood.color);
-        els.moodSummary.innerHTML = `<span>${friendlyDate(state.selectedDate)}</span><strong>${mood.label}</strong>`;
+        els.stateStripTitle.innerHTML = "";
+        els.moodSummary.innerHTML = `<span>感受</span><strong><span class="mood-emoji emoji-mark">${mood.emoji}</span>${mood.label}</strong>`;
         if (latest) {
           const tooltip = note.thoughts.map((item) => `${formatThoughtTime(item.createdAt)} · ${item.text}`).join("\n");
           els.thoughtSummary.dataset.tooltip = tooltip;
           els.thoughtSummary.dataset.tooltipAlways = "true";
           els.thoughtSummary.innerHTML = `
-            <span>最近想法</span>
+            <span>想法</span>
             <div class="thought-line"><time class="thought-time">${escapeHtml(formatThoughtTime(latest.createdAt))}</time><span class="thought-text">${escapeHtml(latest.text)}</span></div>
           `;
         } else {
           delete els.thoughtSummary.dataset.tooltip;
           delete els.thoughtSummary.dataset.tooltipAlways;
-          els.thoughtSummary.innerHTML = `<span>想法记录</span><div class="thought-line"><span class="thought-text">今天还没有留下想法</span></div>`;
+          els.thoughtSummary.innerHTML = `<span>想法</span><div class="thought-line"><span class="thought-text">今天还没有留下想法</span></div>`;
         }
         els.openDayStateBtn.hidden = false;
-        els.openDayStateBtn.textContent = "记录状态";
+        els.openDayStateBtn.textContent = "记录";
         return;
       }
 
@@ -3986,10 +4882,11 @@
       els.dayStateStrip.classList.add("range-mode");
       els.dayStateStrip.style.setProperty("--mood-bg", "rgba(255, 250, 241, 0.9)");
       els.dayStateStrip.style.setProperty("--mood-color", "var(--accent-strong)");
-      els.moodSummary.innerHTML = `${renderMoodCurve(notes)}<strong>整体状态</strong>`;
+      els.stateStripTitle.innerHTML = "";
+      els.moodSummary.innerHTML = `<span>感受</span>${renderMoodCurve(getRecentMoodNotes(notes))}`;
       delete els.thoughtSummary.dataset.tooltip;
       delete els.thoughtSummary.dataset.tooltipAlways;
-      els.thoughtSummary.innerHTML = `<span>想法记录</span><div class="thought-line"><span class="thought-text">这期间你有 ${thoughtDays} 天记录了自己的想法</span></div>`;
+      els.thoughtSummary.innerHTML = `<span>想法</span><div class="thought-line"><span class="thought-text">这期间你有 ${thoughtDays} 天记录了自己的想法</span></div>`;
       els.openDayStateBtn.hidden = true;
     }
 
@@ -4001,12 +4898,88 @@
       const today = formatDate(new Date());
       const weekStart = getWeekStart(today);
 
+      const firstDate = getFirstRecordDate(today);
+      els.topbar.classList.toggle("calendar-mode", state.viewMode === "calendar");
+      if (state.viewMode === "calendar") renderCalendarFilterControls();
       els.todayBtn.classList.toggle("active", state.viewMode === "date" && state.selectedDate === today);
       els.tomorrowBtn.classList.toggle("active", state.viewMode === "range" && state.rangeStart === weekStart && state.rangeEnd === today);
-      els.showAllBtn.textContent = state.viewMode === "calendar" ? "返回日期" : "全部记录";
+      els.allTimeBtn.classList.toggle("active", state.viewMode !== "calendar" && state.rangeStart === firstDate && (state.rangeEnd === today || (firstDate === today && !state.rangeEnd)));
+      els.showAllBtn.textContent = state.viewMode === "calendar" ? "返回" : "日历";
+    }
+
+    function renderCalendarFilterControls() {
+      const years = getCalendarAvailableYears();
+      const selectedYear = state.calendarFilterYear || "";
+      const selectedMonth = state.calendarFilterMonth || "";
+      els.calendarAllBtn.classList.toggle("active", !selectedYear);
+      els.calendarYearSelect.innerHTML = `<option value="" ${selectedYear ? "" : "selected"}>选择年份</option>`
+        + years.map((year) => `<option value="${year}" ${String(year) === selectedYear ? "selected" : ""}>${year}年</option>`).join("");
+      els.calendarYearSelect.value = selectedYear;
+      els.calendarMonthSelect.innerHTML = `<option value="" ${selectedMonth ? "" : "selected"}>全年</option>`
+        + Array.from({ length: 12 }, (_, index) => {
+          const month = String(index + 1);
+          return `<option value="${month}" ${month === selectedMonth ? "selected" : ""}>${index + 1}月</option>`;
+        }).join("");
+      els.calendarMonthSelect.disabled = !selectedYear;
+    }
+
+    function selectCalendarAll() {
+      state.calendarFilterYear = "";
+      state.calendarFilterMonth = "";
+      render();
+    }
+
+    function handleCalendarYearChange() {
+      state.calendarFilterYear = els.calendarYearSelect.value || "";
+      state.calendarFilterMonth = "";
+      render();
+    }
+
+    function handleCalendarMonthChange() {
+      if (!state.calendarFilterYear) return;
+      state.calendarFilterMonth = els.calendarMonthSelect.value || "";
+      render();
+    }
+
+    function getCalendarAvailableYears() {
+      const today = formatDate(new Date());
+      const first = getFirstRecordDate(today);
+      const startYear = new Date(`${first}T00:00:00`).getFullYear();
+      const endYear = new Date(`${today}T00:00:00`).getFullYear();
+      return Array.from({ length: Math.max(1, endYear - startYear + 1) }, (_, index) => startYear + index);
+    }
+
+    function getCalendarDisplayRange() {
+      const today = formatDate(new Date());
+      const first = getFirstRecordDate(today);
+      const year = Number(state.calendarFilterYear);
+      const month = Number(state.calendarFilterMonth);
+      if (!year) return { start: first, end: today };
+
+      if (month) {
+        return {
+          start: `${year}-${String(month).padStart(2, "0")}-01`,
+          end: formatDate(new Date(year, month, 0))
+        };
+      }
+      return { start: `${year}-01-01`, end: `${year}-12-31` };
+    }
+
+    function getCalendarMonthRangeLabel() {
+      const { start, end } = getCalendarDisplayRange();
+      const startDate = new Date(`${start}T00:00:00`);
+      const endDate = new Date(`${end || start}T00:00:00`);
+      const startText = `${startDate.getFullYear()}年${startDate.getMonth() + 1}月`;
+      const endText = `${endDate.getFullYear()}年${endDate.getMonth() + 1}月`;
+      return startText === endText ? startText : `${startText} - ${endText}`;
     }
 
     function renderProjects() {
+      const calendarMode = state.viewMode === "calendar";
+      const railLayout = els.projectRail.closest(".project-rail-layout");
+      els.manageProjectsBtn.hidden = false;
+      els.addProjectBtn.hidden = calendarMode;
+      railLayout.classList.toggle("readonly-rail", calendarMode);
       const draftProjects = [...state.projects]
         .filter(isDraftProject)
         .sort(compareProjects);
@@ -4016,7 +4989,7 @@
       const plannedLaterCount = state.projects.filter((project) => isPlannedLater(project)).length;
       const cardCount = draftProjects.length + ddlProjects.length + (plannedLaterCount ? 1 : 0);
       els.projectHint.textContent = cardCount > 3 ? "左右滑动查看更多" : "";
-      els.projectRail.closest(".project-rail-layout").classList.toggle("has-overflow", cardCount > 3);
+      railLayout.classList.toggle("has-overflow", cardCount > 3);
       els.projectRail.innerHTML = draftProjects.map(projectCard).join("")
         + ddlProjects.map(projectCard).join("")
         + (plannedLaterCount ? otherProjectCard(plannedLaterCount) : "");
@@ -4026,8 +4999,8 @@
       const mode = getProjectScheduleMode(project);
       const draft = isDraftProject(project);
       const countdown = hasProjectDdl(project) ? getDdlCountdown(project.ddl) : { label: "", variant: "waiting-project", longRange: false };
-      const scheduleText = mode === "plannedLater" ? "还没想好" : "未安排";
-      const timeTotal = sumMinutes(getBaseVisibleTasks().filter((task) => task.projectId === project.id));
+      const scheduleText = mode === "plannedLater" ? "还没想好" : "设置日期";
+      const timeTotal = sumMinutes(getProjectRailTasksForCurrentRange().filter((task) => task.projectId === project.id));
       const timeMarkup = `<div class="project-time-total">累计 ${formatCompactDuration(timeTotal)}</div>`;
       const scheduleMarkup = hasProjectDdl(project)
         ? `<div class="project-countdown" data-project-field="ddl" title="双击或右键修改 DDL">
@@ -4036,7 +5009,7 @@
             </div>`
         : `<div class="project-date-placeholder" data-project-field="ddl" title="双击或右键设置日期或待计划">${scheduleText}</div>`;
       return `
-        <div class="project-card has-ddl ${draft ? "waiting-project" : countdown.variant}" data-project-id="${project.id}" data-schedule-mode="${mode}">
+        <div class="project-card has-ddl ${draft ? "waiting-project" : countdown.variant} ${state.projectFilterKey === project.id ? "is-filtered" : ""}" data-project-id="${project.id}" data-project-filter-key="${project.id}" data-schedule-mode="${mode}">
           <div class="project-content">
             <div class="project-name" data-project-field="name" title="双击或右键修改项目名称">${escapeHtml(project.name)}</div>
             ${scheduleMarkup}
@@ -4048,14 +5021,22 @@
 
     function otherProjectCard(count) {
       const plannedIds = new Set(state.projects.filter((project) => isPlannedLater(project)).map((project) => project.id));
-      const timeTotal = sumMinutes(getBaseVisibleTasks().filter((task) => plannedIds.has(task.projectId)));
+      const timeTotal = sumMinutes(getProjectRailTasksForCurrentRange().filter((task) => plannedIds.has(task.projectId)));
       return `
-        <button class="project-card other-card" type="button" data-open-project-list>
+        <button class="project-card other-card ${state.projectFilterKey === "__planned_later__" ? "is-filtered" : ""}" type="button" data-project-filter-key="__planned_later__">
           <span>待计划</span>
           <span class="other-count">${count} 个还没想好的项目</span>
           <span class="project-time-total">累计 ${formatCompactDuration(timeTotal)}</span>
         </button>
       `;
+    }
+
+    function getProjectRailTasksForCurrentRange() {
+      if (state.viewMode === "calendar") {
+        const { start, end } = getCalendarDisplayRange();
+        return state.tasks.filter((task) => task.targetDate >= start && task.targetDate <= end);
+      }
+      return getBaseTasksForCurrentRange();
     }
 
     function addProjectCard() {
@@ -4078,7 +5059,6 @@
     }
 
     function renderDaily() {
-      renderDayStateStrip();
       const baseTasks = getBaseVisibleTasks();
       const visibleTasks = applyRatingFilter(baseTasks);
       const ratingCounts = countRatings(baseTasks);
@@ -4088,6 +5068,7 @@
       els.doneCount.textContent = ratingCounts.full;
       els.doneRate.textContent = ratingCounts.partial;
       els.pendingCount.textContent = ratingCounts.baseline;
+      els.unplannedCount.textContent = ratingCounts.unplanned;
       els.focusTime.textContent = formatCompactDuration(sumMinutes(baseTasks));
       els.metricButtons.forEach((button) => button.classList.toggle("active", (button.dataset.ratingFilter || "all") === state.ratingFilter));
       renderTaskHeader();
@@ -4102,7 +5083,7 @@
         const key = task.completionRating || "full";
         if (counts[key] !== undefined) counts[key] += 1;
         return counts;
-      }, { full: 0, partial: 0, baseline: 0 });
+      }, { full: 0, partial: 0, baseline: 0, unplanned: 0 });
     }
 
     function applyRatingFilter(tasks) {
@@ -4111,12 +5092,9 @@
     }
 
     function renderTaskHeader() {
-      const projectView = state.todoListView === "project";
-      els.taskTable.classList.toggle("project-table-view", projectView);
-      els.toggleTodoViewBtn.textContent = projectView ? "切回时间" : "切回项目";
-      const columns = projectView
-        ? [["project", "项目"], ["text", "事件"], ["timeBucket", "时间"], ["targetDate", "日期"], ["durationMinutes", "投入时间"], ["completionRating", "达成感"], ["note", "备注"]]
-        : [["timeBucket", "时间"], ["text", "事件"], ["project", "项目"], ["targetDate", "日期"], ["durationMinutes", "投入时间"], ["completionRating", "达成感"], ["note", "备注"]];
+      const projectView = false;
+      els.taskTable.classList.toggle("project-table-view", false);
+      const columns = [["timeBucket", "时间"], ["text", "事件"], ["project", "项目"], ["targetDate", "日期"], ["durationMinutes", "投入时间"], ["completionRating", "完成情况"], ["note", "备注"]];
       const headers = columns.map(([key, label]) => {
         const active = state.sortKey === key;
         const mark = active && state.sortDir === "desc" ? "↓" : "↑";
@@ -4157,7 +5135,7 @@
     }
 
     function getRatingRank(value) {
-      return { baseline: 1, partial: 2, full: 3 }[value || "full"] || 3;
+      return { baseline: 1, partial: 2, full: 3, unplanned: 4 }[value || "full"] || 3;
     }
 
     function toggleTodoListView() {
@@ -4169,16 +5147,6 @@
     }
 
     function renderTaskRows(tasks) {
-      if (state.todoListView === "project") {
-        if (state.sortKey) return tasks.map((task) => taskRow(task)).join("");
-        let currentGroup = "";
-        return tasks.map((task) => {
-          const groupKey = getTaskProjectKey(task);
-          const divider = groupKey !== currentGroup ? projectSectionRow(task, tasks) : "";
-          currentGroup = groupKey;
-          return divider + taskRow(task);
-        }).join("");
-      }
       let currentSection = "";
       return tasks.map((task) => {
         const section = getTaskDisplaySection(task);
@@ -4252,7 +5220,7 @@
       const timeCell = `<span class="planned-time" data-task-field="timeBucket" title="双击或右键修改时间">${getTaskDisplaySection(task)}</span>`;
       const dateCell = `<span data-task-field="targetDate" title="双击或右键修改日期">${friendlyDate(task.targetDate)}</span>`;
       const durationCell = `<span class="completion-record" data-task-field="durationMinutes" title="双击或右键修改投入时间">${task.durationMinutes ? formatDuration(task.durationMinutes) : "未填写"}</span>`;
-      const ratingCell = `<span class="status" data-task-field="completionRating" title="双击或右键修改达成感">${rating.emoji} ${rating.label}</span>`;
+      const ratingCell = `<span class="status" data-task-field="completionRating" title="双击或右键修改完成情况">${rating.emoji} ${rating.label}</span>`;
       const noteCell = `<div class="task-title task-remark" data-task-field="note" data-tooltip="${escapeHtml(note)}" aria-label="${escapeHtml(note)}">${note ? escapeHtml(note) : "-"}</div>`;
       const actionCell = `
           <td>
@@ -4260,25 +5228,24 @@
               <button class="icon-button action-danger" type="button" data-action="delete" data-id="${task.id}" title="删除事件" aria-label="删除事件">×</button>
             </div>
           </td>`;
-      const orderedCells = state.todoListView === "project"
-        ? `<td><span class="drag-handle">↕</span>${projectCell}</td><td>${titleCell}</td><td>${timeCell}</td><td>${dateCell}</td><td>${durationCell}</td><td>${ratingCell}</td><td>${noteCell}</td>${actionCell}`
-        : `<td><span class="drag-handle">↕</span>${timeCell}</td><td>${titleCell}</td><td>${projectCell}</td><td>${dateCell}</td><td>${durationCell}</td><td>${ratingCell}</td><td>${noteCell}</td>${actionCell}`;
+      const orderedCells = `<td>${timeCell}</td><td>${titleCell}</td><td>${projectCell}</td><td>${dateCell}</td><td>${durationCell}</td><td>${ratingCell}</td><td>${noteCell}</td>${actionCell}`;
       return `
-        <tr class="task-row done" draggable="true" data-task-id="${task.id}" data-project-key="${getTaskProjectKey(task)}">
+        <tr class="task-row done" data-task-id="${task.id}" data-project-key="${getTaskProjectKey(task)}">
           ${orderedCells}
         </tr>
       `;
     }
 
     function renderCalendar() {
-      const start = state.rangeStart;
-      const end = state.rangeEnd;
-      els.calendarTitle.textContent = `${friendlyDate(start)} - ${friendlyDate(end)}`;
+      const { start, end } = getCalendarDisplayRange();
+      els.calendarTitle.textContent = getCalendarMonthRangeLabel();
       els.calendarGrid.innerHTML = renderMonthCalendars(start, end);
-      const anchorDate = state.calendarAnchorDate || formatDate(new Date());
-      const anchor = els.calendarGrid.querySelector(`[data-date="${anchorDate}"]`);
-      if (anchor) setTimeout(() => anchor.scrollIntoView({ block: "center", inline: "nearest" }), 0);
-      state.calendarAnchorDate = "";
+      const anchorDate = state.calendarAnchorDate;
+      if (anchorDate) {
+        const anchor = els.calendarGrid.querySelector(`[data-date="${anchorDate}"]`);
+        if (anchor) setTimeout(() => anchor.scrollIntoView({ block: "center", inline: "nearest" }), 0);
+        state.calendarAnchorDate = "";
+      }
     }
 
     function handleCalendarDayOpen(event) {
@@ -4339,7 +5306,7 @@
 
     function calendarProject(group) {
       const minutes = sumMinutes(group.tasks);
-      const className = group.project.id ? "calendar-project" : "calendar-project unassigned";
+      const className = `${group.project.id ? "calendar-project" : "calendar-project unassigned"} ${projectMatchesCalendarFilter(group.project) ? "project-highlight" : ""}`;
       return `
         <div class="${className}">
           <strong title="${escapeHtml(group.project.name)}">${escapeHtml(group.project.name)}${group.project.id ? "" : " · 待整理"}</strong>
@@ -4363,8 +5330,6 @@
       });
 
       return [...map.values()].sort((a, b) => {
-        if (!a.project.id && b.project.id) return 1;
-        if (a.project.id && !b.project.id) return -1;
         return sumMinutes(b.tasks) - sumMinutes(a.tasks) || compareProjects(a.project, b.project);
       });
     }
@@ -4748,13 +5713,13 @@
 
     function getMoodOptions() {
       return [
-        { value: "very-unpleasant", label: "非常不愉快", emoji: "🌧", color: "#5c6f83", bg: "rgba(218, 228, 232, 0.82)" },
-        { value: "unpleasant", label: "不愉快", emoji: "🌫", color: "#647b72", bg: "rgba(224, 234, 225, 0.82)" },
+        { value: "very-unpleasant", label: "非常不愉快", emoji: "🥀", color: "#6c5b50", bg: "rgba(232, 222, 212, 0.82)" },
+        { value: "unpleasant", label: "不愉快", emoji: "🌧️", color: "#5c6f83", bg: "rgba(218, 228, 232, 0.82)" },
         { value: "slightly-unpleasant", label: "有点不愉快", emoji: "☁️", color: "#6f897f", bg: "rgba(230, 239, 229, 0.82)" },
-        { value: "neutral", label: "不悲不喜", emoji: "◦", color: "#8a684f", bg: "rgba(246, 238, 222, 0.86)" },
-        { value: "slightly-pleasant", label: "有点愉快", emoji: "🌤", color: "#b87535", bg: "rgba(255, 237, 210, 0.86)" },
+        { value: "neutral", label: "不悲不喜", emoji: "🌝", color: "#8a684f", bg: "rgba(246, 238, 222, 0.86)" },
+        { value: "slightly-pleasant", label: "有点愉快", emoji: "🌤️", color: "#b87535", bg: "rgba(255, 237, 210, 0.86)" },
         { value: "pleasant", label: "愉快", emoji: "☀️", color: "#c45f32", bg: "rgba(255, 226, 198, 0.88)" },
-        { value: "very-pleasant", label: "非常愉快", emoji: "🌼", color: "#d08b25", bg: "rgba(255, 214, 148, 0.86)" }
+        { value: "very-pleasant", label: "非常愉快", emoji: "🌻", color: "#d08b25", bg: "rgba(255, 214, 148, 0.86)" }
       ];
     }
 
@@ -4764,9 +5729,10 @@
 
     function getRatingMap() {
       return {
-        baseline: { label: "保底完成", emoji: "🌱" },
-        partial: { label: "有所推进", emoji: "🌤" },
-        full: { label: "圆满完成", emoji: "🌟" }
+        baseline: { label: "保底完成", emoji: "🤲" },
+        partial: { label: "有所推进", emoji: "👏" },
+        full: { label: "圆满完成", emoji: "🎉" },
+        unplanned: { label: "计划外", emoji: "✨" }
       };
     }
 
@@ -4835,14 +5801,18 @@
       return map[value] || 0;
     }
 
+    function getRecentMoodNotes(notes, limit = 7) {
+      return notes.slice(Math.max(0, notes.length - limit));
+    }
+
     function renderMoodCurve(notes, detailed = false) {
       const options = getMoodOptions();
       const scored = notes
         .map((note, index) => ({ ...note, index, score: getMoodScore(note.mood), mood: getMoodOption(note.mood) }))
         .filter((note) => note.score);
-      const width = detailed ? 720 : 460;
+      const width = detailed ? Math.max(620, notes.length * 104) : 460;
       const height = detailed ? 260 : 86;
-      const padLeft = detailed ? 118 : 12;
+      const padLeft = detailed ? 18 : 12;
       const padRight = detailed ? 26 : 12;
       const padTop = detailed ? 20 : 10;
       const padBottom = detailed ? 34 : 12;
@@ -4858,12 +5828,22 @@
             const score = index + 1;
             const y = yFor(score).toFixed(1);
             const guideClass = score === 4 ? "neutral-guide" : "curve-guide";
-            return `<line class="${guideClass}" x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}"></line><text x="8" y="${Number(y) + 4}" fill="${score === 4 ? "#7b6250" : "#9a826f"}" font-size="11">${mood.label}</text>`;
+            return `<line class="${guideClass}" x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}"></line>`;
           }).join("")
         : `<line class="neutral-guide" x1="${padLeft}" y1="${neutralY}" x2="${width - padRight}" y2="${neutralY}"></line>`;
-      if (empty) return `<div class="mood-curve ${detailed ? "mood-chart" : ""}"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="暂无状态曲线">${guides}</svg></div>`;
+      const chartStyle = detailed ? ` style="--chart-width:${width}px"` : "";
+      const yAxis = detailed ? `<div class="mood-y-axis"><svg viewBox="0 0 112 ${height}" aria-hidden="true">${options.map((mood, index) => {
+        const score = index + 1;
+        const y = yFor(score).toFixed(1);
+        return `<text x="8" y="${Number(y) + 4}" fill="${score === 4 ? "#7b6250" : "#9a826f"}" font-size="11">${mood.label}</text>`;
+      }).join("")}</svg></div>` : "";
+      const wrapChart = (svg) => detailed
+        ? `<div class="mood-chart-shell">${yAxis}<div class="mood-curve mood-chart"${chartStyle}>${svg}</div></div>`
+        : `<div class="mood-curve"${chartStyle}>${svg}</div>`;
+      if (empty) return wrapChart(`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="暂无状态曲线">${guides}</svg>`);
       const segments = scored.length === 1 ? "" : scored.slice(1).map((note, index) => {
         const prev = scored[index];
+        if (note.index - prev.index !== 1) return "";
         const avg = (prev.score + note.score) / 2;
         const color = avg > 4 ? "#c68138" : avg < 4 ? "#5f857d" : "#8a684f";
         const x1 = xFor(prev.index);
@@ -4876,11 +5856,25 @@
       }).join("");
       const singlePoint = scored.length === 1 ? `<line class="curve-segment" style="--segment-color:${scored[0].mood.color}" x1="${Math.max(padLeft, xFor(scored[0].index) - 14)}" y1="${yFor(scored[0].score).toFixed(1)}" x2="${Math.min(width - padRight, xFor(scored[0].index) + 14)}" y2="${yFor(scored[0].score).toFixed(1)}"></line>` : "";
       const circles = scored.map((note) => `<circle style="--point-color:${note.mood.color}" cx="${xFor(note.index).toFixed(1)}" cy="${yFor(note.score).toFixed(1)}" r="${detailed ? 5 : 4}"><title>${friendlyDate(note.date)} ${note.mood.label}</title></circle>`).join("");
+      const labelIndexes = new Set();
+      if (detailed) {
+        labelIndexes.add(0);
+        labelIndexes.add(notes.length - 1);
+        notes.forEach((note, index) => { if (note.mood) labelIndexes.add(index); });
+        if (labelIndexes.size > 14) {
+          const moodIndexes = notes.map((note, index) => note.mood ? index : -1).filter((index) => index >= 0);
+          const step = Math.ceil(moodIndexes.length / 10);
+          labelIndexes.clear();
+          labelIndexes.add(0);
+          labelIndexes.add(notes.length - 1);
+          moodIndexes.forEach((index, order) => { if (order % step === 0 || order === moodIndexes.length - 1) labelIndexes.add(index); });
+        }
+      }
       const labels = detailed ? notes.map((note, index) => {
-        if (notes.length > 12 && index % Math.ceil(notes.length / 8) !== 0 && index !== notes.length - 1) return "";
+        if (!labelIndexes.has(index)) return "";
         return `<text x="${xFor(index).toFixed(1)}" y="${height - 7}" text-anchor="middle" fill="#8a684f" font-size="10">${friendlyDate(note.date).replace(/周.*/, "")}</text>`;
       }).join("") : "";
-      return `<div class="mood-curve ${detailed ? "mood-chart" : ""}"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="整体状态曲线">${guides}${segments}${singlePoint}${circles}${labels}</svg></div>`;
+      return wrapChart(`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="整体状态曲线">${guides}${segments}${singlePoint}${circles}${labels}</svg>`);
     }
 
     function handleMoodSummaryClick() {
@@ -4893,17 +5887,21 @@
 
     function openMoodDetailDialog() {
       const notes = getNotesInCurrentRange();
-      els.noteDetailTitle.textContent = "整体状态趋势";
+      els.noteDetailTitle.textContent = "整体趋势";
       els.noteDetailBody.innerHTML = renderMoodCurve(notes, true);
       els.noteDetailDialog.showModal();
+      requestAnimationFrame(() => {
+        const chart = els.noteDetailBody.querySelector(".mood-chart");
+        if (chart) chart.scrollLeft = chart.scrollWidth;
+      });
     }
 
     function openThoughtDetailDialog() {
       const notes = isSingleDateContext() ? [{ date: state.selectedDate, ...getDayNote(state.selectedDate) }] : getNotesInCurrentRange();
       const withThoughts = notes.filter((note) => note.thoughts.length);
-      els.noteDetailTitle.textContent = isSingleDateContext() ? `${friendlyDate(state.selectedDate)} 想法记录` : "想法记录";
+      els.noteDetailTitle.textContent = "想法记录";
       const exportText = getThoughtExportText(withThoughts);
-      const thoughtToolbar = false && state.account.proActive && withThoughts.length
+      const thoughtToolbar = state.account.proActive && withThoughts.length
         ? `<div class="note-detail-toolbar"><button class="ghost" type="button" data-note-action="copy-all-thoughts">一键复制想法</button></div>`
         : "";
       els.noteDetailBody.innerHTML = withThoughts.length
@@ -4922,8 +5920,8 @@
       const date = state.viewMode === "date" ? state.selectedDate : (state.rangeEnd || state.selectedDate);
       state.editingDayStateDate = date;
       const note = getDayNote(date);
-      els.dayStateTitle.textContent = `${friendlyDate(date)} · 今天整体状态`;
-      els.moodPicker.innerHTML = `<legend>今天整体状态</legend>` + getMoodOptions().map((mood) => `
+      els.dayStateTitle.textContent = `${friendlyDate(date)} · 整体状态`;
+      els.moodPicker.innerHTML = `<legend>感受</legend>` + getMoodOptions().map((mood) => `
         <label style="--mood-option-bg:${mood.bg};--mood-option-color:${mood.color}">
           <input type="radio" name="dayMood" value="${mood.value}" ${note.mood === mood.value ? "checked" : ""}>
           ${mood.emoji}<br>${mood.label}
@@ -4945,9 +5943,9 @@
       const editable = options.editable !== false;
       const date = options.date || state.editingDayStateDate || state.selectedDate;
       const actions = editable
-        ? `<button class="thought-action" type="button" data-thought-action="copy" title="复制">⧉</button><button class="thought-action" type="button" data-thought-action="delete" title="删除">×</button>`
+        ? `<button class="thought-action" type="button" data-thought-action="delete" title="删除">×</button>`
         : `<button class="thought-action" type="button" data-thought-action="copy" title="复制">⧉</button>`;
-      return `<div class="thought-item" data-date="${escapeHtml(date)}" data-thought-id="${escapeHtml(item.id)}"><time>${formatThoughtTime(item.createdAt)}</time><div class="thought-text-field" data-thought-action="edit" data-tooltip="${escapeHtml(item.text)}" aria-label="${escapeHtml(item.text)}">${escapeHtml(item.text)}</div><div class="thought-actions">${actions}</div></div>`;
+      return `<div class="thought-item" data-date="${escapeHtml(date)}" data-thought-id="${escapeHtml(item.id)}"><time>${formatThoughtTime(item.createdAt)}</time><div class="thought-text-field" data-thought-action="edit" data-tooltip="${escapeHtml(item.text)}" data-tooltip-thought="true" aria-label="${escapeHtml(item.text)}">${escapeHtml(item.text)}</div><div class="thought-actions">${actions}</div></div>`;
     }
 
     function getThoughtExportText(notes) {
@@ -4980,14 +5978,19 @@
       const action = actionEl.dataset.thoughtAction;
       const row = event.target.closest('.thought-item');
       if (!row) return;
-      if (action === "edit") {
-        if (els.dayStateDialog.open && els.thoughtList.contains(row)) startThoughtInlineEdit(row);
-        return;
-      }
       const date = row.dataset.date;
       const note = getDayNote(date);
       const thought = note.thoughts.find((item) => item.id === row.dataset.thoughtId);
       if (!thought) return;
+      if (event.target.closest(".thought-edit-input")) return;
+      if (action === "edit") {
+        if (els.dayStateDialog.open && els.thoughtList.contains(row)) {
+          startThoughtInlineEdit(row);
+        } else {
+          openThoughtPreview(date, thought);
+        }
+        return;
+      }
       if (action === "copy") {
         copyText(thought.text);
         return;
@@ -5005,12 +6008,22 @@
       }
     }
 
+    function openThoughtPreview(date, thought) {
+      clearTimeout(tooltipTimer);
+      els.hoverTooltip.classList.remove("visible");
+      els.hoverTooltip.hidden = true;
+      els.thoughtPreviewTitle.textContent = "";
+      els.thoughtPreviewMeta.textContent = `${friendlyDate(date)} · ${formatThoughtTime(thought.createdAt)}`;
+      els.thoughtPreviewContent.textContent = thought.text;
+      els.thoughtPreviewDialog.showModal();
+    }
+
     function startThoughtInlineEdit(row) {
       const date = row.dataset.date;
       const note = getDayNote(date);
       const thought = note.thoughts.find((item) => item.id === row.dataset.thoughtId);
       const field = row.querySelector('.thought-text-field');
-      if (!thought || !field || field.querySelector('input')) return;
+      if (!thought || !field || field.querySelector('input, textarea')) return;
       const input = document.createElement('textarea');
       input.className = 'thought-edit-input';
       input.value = thought.text;

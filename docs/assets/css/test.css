@@ -601,6 +601,19 @@
       width: 100%;
     }
 
+    .auth-code-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .auth-code-row .ghost {
+      min-width: 92px;
+      padding-inline: 10px;
+      white-space: nowrap;
+    }
+
     .drawer-note {
       margin: 0;
       color: var(--muted);
@@ -625,6 +638,11 @@
       border-radius: 9px;
       background: #fffaf2;
       color: var(--text);
+    }
+
+    .sync-action:disabled {
+      cursor: not-allowed;
+      opacity: 0.68;
     }
 
     .sync-action strong {

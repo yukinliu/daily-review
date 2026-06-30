@@ -1,5 +1,6 @@
     const STORAGE_KEY = location.pathname.endsWith("/test.html") ? "daylog-test-v1" : "daylog-v1";
     const LEGACY_STORAGE_KEYS = location.pathname.endsWith("/test.html") ? ["daily-review-test-v1"] : ["daily-todo-table-v1", "daily-review-v1"];
+    const AUTH_ENDPOINT = "https://daylog-d3gkb5k6y8cbd1a32-1316024752.ap-shanghai.app.tcloudbase.com/auth";
     const UNASSIGNED_PROJECT = "未归类";
 
     const state = loadData();
@@ -47,24 +48,23 @@
       accountCloseBtn: document.querySelector("#accountCloseBtn"),
       accountStatus: document.querySelector("#accountStatus"),
       accountHint: document.querySelector("#accountHint"),
-      proInactivePanel: document.querySelector("#proInactivePanel"),
-      proActivePanel: document.querySelector("#proActivePanel"),
-      accountCodeDisplay: document.querySelector("#accountCodeDisplay"),
-      accountPasswordDisplay: document.querySelector("#accountPasswordDisplay"),
-      proCodeInput: document.querySelector("#proCodeInput"),
-      proPasswordInput: document.querySelector("#proPasswordInput"),
-      activateProBtn: document.querySelector("#activateProBtn"),
+      emailLoginSection: document.querySelector("#emailLoginSection"),
+      emailLoginPanel: document.querySelector("#emailLoginPanel"),
+      emailLoggedInPanel: document.querySelector("#emailLoggedInPanel"),
+      authEmailInput: document.querySelector("#authEmailInput"),
+      authPasswordInput: document.querySelector("#authPasswordInput"),
+      authCodeInput: document.querySelector("#authCodeInput"),
+      sendAuthCodeBtn: document.querySelector("#sendAuthCodeBtn"),
+      verifyAuthCodeBtn: document.querySelector("#verifyAuthCodeBtn"),
+      loginAuthBtn: document.querySelector("#loginAuthBtn"),
+      logoutAccountBtn: document.querySelector("#logoutAccountBtn"),
+      accountEmailDisplay: document.querySelector("#accountEmailDisplay"),
+      accountLoginAtDisplay: document.querySelector("#accountLoginAtDisplay"),
+      authMessage: document.querySelector("#authMessage"),
       syncUploadBtn: document.querySelector("#syncUploadBtn"),
       syncUploadHint: document.querySelector("#syncUploadHint"),
       syncMessage: document.querySelector("#syncMessage"),
       syncDownloadBtn: document.querySelector("#syncDownloadBtn"),
-      syncConfirm: document.querySelector("#syncConfirm"),
-      syncConfirmTitle: document.querySelector("#syncConfirmTitle"),
-      syncConfirmText: document.querySelector("#syncConfirmText"),
-      syncCancelBtn: document.querySelector("#syncCancelBtn"),
-      syncConfirmBtn: document.querySelector("#syncConfirmBtn"),
-      resetProTestBtn: document.querySelector("#resetProTestBtn"),
-      copyProContactBtn: document.querySelector("#copyProContactBtn"),
       projectHint: document.querySelector("#projectHint"),
       manageProjectsBtn: document.querySelector("#manageProjectsBtn"),
       projectRail: document.querySelector("#projectRail"),
@@ -261,14 +261,11 @@
       els.accountCenterBtn.addEventListener("click", openAccountDrawer);
       els.accountCloseBtn.addEventListener("click", closeAccountDrawer);
       els.accountBackdrop.addEventListener("click", closeAccountDrawer);
-      els.activateProBtn.addEventListener("click", activateProAccount);
       els.accountDrawer.addEventListener("click", handleAccountDrawerClick);
-      els.syncUploadBtn.addEventListener("click", handleSyncUpload);
-      els.syncDownloadBtn.addEventListener("click", handleSyncDownload);
-      els.syncCancelBtn.addEventListener("click", closeSyncConfirm);
-      els.syncConfirmBtn.addEventListener("click", confirmSyncAction);
-      els.resetProTestBtn.addEventListener("click", resetProForTesting);
-      els.copyProContactBtn.addEventListener("click", copyProContactText);
+      els.sendAuthCodeBtn.addEventListener("click", sendAuthCode);
+      els.verifyAuthCodeBtn.addEventListener("click", verifyAuthCode);
+      els.loginAuthBtn.addEventListener("click", loginAuthAccount);
+      els.logoutAccountBtn.addEventListener("click", logoutAccount);
       els.openDayStateBtn.addEventListener("click", openDayStateDialog);
       els.moodSummary.addEventListener("click", handleMoodSummaryClick);
       els.thoughtSummary.addEventListener("click", handleThoughtSummaryClick);
@@ -358,135 +355,192 @@
 
     function renderAccountDrawer() {
       const account = state.account || normalizeAccount(null);
-      const activationSection = document.querySelector("#proActivationSection");
-      if (activationSection) activationSection.classList.toggle("pro-is-active", account.proActive);
-      els.accountStatus.classList.toggle("inactive", !account.proActive);
-      els.accountStatus.innerHTML = account.proActive
-        ? `<strong>Pro 已激活</strong><span>${maskCode(account.code)}</span>`
-        : `<strong>基础版 · Pro 未激活</strong>`;
-      els.accountHint.textContent = account.proActive
-        ? "当前本机数据已绑定到这个账号。账号仅供本人跨设备同步使用，请不要外借。"
-        : "基础版数据只保存在当前浏览器。激活 Pro 后，可把本机数据绑定到账号。";
-      els.proInactivePanel.hidden = account.proActive;
-      els.proActivePanel.hidden = !account.proActive;
-      els.accountCodeDisplay.textContent = account.code || "-";
-      els.accountPasswordDisplay.textContent = account.password ? "•".repeat(Math.min(10, Math.max(6, account.password.length))) : "-";
-      if (!account.proActive) {
-        els.proCodeInput.value = els.proCodeInput.value;
-        els.proPasswordInput.value = els.proPasswordInput.value;
-      }
+      els.accountStatus.classList.toggle("inactive", !account.loggedIn);
+      els.accountStatus.innerHTML = account.loggedIn
+        ? `<strong>已登录</strong><span>${escapeHtml(account.email)}</span>`
+        : `<strong>未登录</strong>`;
+      els.accountHint.textContent = account.loggedIn
+        ? "当前浏览器已登录。后续接入云端后，备份会绑定到这个邮箱账号。"
+        : "未登录时，数据只保存在当前浏览器。登录后可为后续备份功能做准备。";
+      els.emailLoginPanel.hidden = account.loggedIn;
+      els.emailLoggedInPanel.hidden = !account.loggedIn;
+      els.accountEmailDisplay.textContent = account.email || "-";
+      els.accountLoginAtDisplay.textContent = account.loginAt ? formatDateTime(account.loginAt) : "-";
       els.syncUploadHint.textContent = account.lastUploadAt
         ? `上次备份：${timeAgo(account.lastUploadAt)} · ${account.lastUploadPlatform || getPlatformLabel()}`
-        : "上次备份：暂无";
+        : "下一步接入云端备份";
     }
 
-    function activateProAccount() {
-      const code = els.proCodeInput.value.trim();
-      const password = els.proPasswordInput.value.trim();
-      if (code.length < 4 || password.length < 4) {
-        showSyncMessage("请填写账号和密码，至少 4 位。", false);
+    async function sendAuthCode() {
+      const email = normalizeEmail(els.authEmailInput.value);
+      if (!isValidEmail(email)) {
+        showAuthMessage("请填写有效邮箱。", false);
         return;
       }
+      setAuthBusy(true);
+      showAuthMessage("正在发送验证码...", true);
+      try {
+        await callAuthApi("sendCode", { email, type: "register" });
+        showAuthMessage("验证码已发送，请查看邮箱。", true);
+        els.authCodeInput.focus();
+      } catch (error) {
+        showAuthMessage(error.message || "验证码发送失败。", false);
+      } finally {
+        setAuthBusy(false);
+      }
+    }
+
+    async function verifyAuthCode() {
+      const email = normalizeEmail(els.authEmailInput.value);
+      const password = els.authPasswordInput.value.trim();
+      const code = els.authCodeInput.value.trim();
+      if (!isValidEmail(email)) {
+        showAuthMessage("请填写有效邮箱。", false);
+        return;
+      }
+      if (password.length < 6) {
+        showAuthMessage("密码至少 6 位。", false);
+        return;
+      }
+      if (!/^\d{6}$/.test(code)) {
+        showAuthMessage("验证码应为 6 位数字。", false);
+        return;
+      }
+      setAuthBusy(true);
+      showAuthMessage("正在注册并登录...", true);
+      try {
+        const data = await callAuthApi("register", { email, password, code });
+        state.account = normalizeAccount({
+          ...state.account,
+          loggedIn: true,
+          email: data.email || email,
+          userId: data.userId || "",
+          token: data.token || "",
+          loginAt: data.loginAt || new Date().toISOString()
+        });
+        els.authPasswordInput.value = "";
+        els.authCodeInput.value = "";
+        saveData();
+        renderAccountDrawer();
+        render();
+        showAuthMessage("注册成功，已登录。", true);
+      } catch (error) {
+        showAuthMessage(error.message || "注册失败。", false);
+      } finally {
+        setAuthBusy(false);
+      }
+    }
+
+    async function loginAuthAccount() {
+      const email = normalizeEmail(els.authEmailInput.value);
+      const password = els.authPasswordInput.value.trim();
+      if (!isValidEmail(email)) {
+        showAuthMessage("请填写有效邮箱。", false);
+        return;
+      }
+      if (password.length < 6) {
+        showAuthMessage("密码至少 6 位。", false);
+        return;
+      }
+      setAuthBusy(true);
+      showAuthMessage("正在登录...", true);
+      try {
+        const data = await callAuthApi("login", { email, password });
+        state.account = normalizeAccount({
+          ...state.account,
+          loggedIn: true,
+          email: data.email || email,
+          userId: data.userId || "",
+          token: data.token || "",
+          loginAt: new Date().toISOString()
+        });
+        els.authPasswordInput.value = "";
+        els.authCodeInput.value = "";
+        saveData();
+        renderAccountDrawer();
+        render();
+        showAuthMessage("已登录。", true);
+      } catch (error) {
+        showAuthMessage(error.message || "登录失败。", false);
+      } finally {
+        setAuthBusy(false);
+      }
+    }
+
+    function logoutAccount() {
       state.account = normalizeAccount({
         ...state.account,
-        proActive: true,
-        code,
-        password,
-        activatedAt: state.account.activatedAt || new Date().toISOString()
+        loggedIn: false,
+        userId: "",
+        token: ""
       });
       saveData();
       renderAccountDrawer();
-      showSyncMessage("已激活并绑定当前复盘数据。", true);
+      render();
+      showAuthMessage("已退出当前邮箱。", false);
     }
 
     function handleAccountDrawerClick(event) {
       const copyButton = event.target.closest("[data-account-copy]");
       if (!copyButton) return;
       const field = copyButton.dataset.accountCopy;
-      const value = field === "password" ? state.account.password : state.account.code;
+      const value = field === "email" ? state.account.email : "";
       copyText(value || "");
       copyButton.textContent = "已复制";
       setTimeout(() => { copyButton.textContent = "复制"; }, 1000);
     }
 
-    function handleSyncUpload() {
-      if (!state.account.proActive) {
-        showSyncMessage("请先激活 Pro，再使用数据备份。", false);
-        return;
+    async function callAuthApi(action, payload = {}) {
+      const response = await fetch(AUTH_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, ...payload })
+      });
+      let result = null;
+      try {
+        result = await response.json();
+      } catch (error) {
+        throw new Error("云函数返回格式不正确。");
       }
-      openSyncConfirm("upload");
-    }
-
-    function handleSyncDownload() {
-      if (!state.account.proActive) {
-        showSyncMessage("请先激活 Pro，再下载备份数据。", false);
-        return;
+      if (!response.ok || !result || result.code !== 0) {
+        throw new Error((result && result.message) || "云函数请求失败。");
       }
-      openSyncConfirm("download");
+      return result.data || {};
     }
 
-    function openSyncConfirm(action) {
-      state.pendingSyncAction = action;
-      els.syncConfirm.hidden = false;
-      els.syncConfirmTitle.textContent = action === "upload" ? "上传数据备份" : "下载最新数据";
-      els.syncConfirmText.textContent = action === "upload"
-        ? "会把当前本机数据作为最新备份。"
-        : "会用最新备份覆盖本机数据。";
-      els.syncMessage.textContent = "";
+    function normalizeEmail(value) {
+      return String(value || "").trim().toLowerCase();
     }
 
-    function closeSyncConfirm() {
-      state.pendingSyncAction = "";
-      els.syncConfirm.hidden = true;
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ""));
     }
 
-    function confirmSyncAction() {
-      const action = state.pendingSyncAction;
-      closeSyncConfirm();
-      if (action === "upload") {
-        state.account.lastUploadAt = new Date().toISOString();
-        state.account.lastUploadPlatform = getPlatformLabel();
-        saveData();
-        renderAccountDrawer();
-        showSyncMessage("已记录本机备份时间。", true);
-        return;
-      }
-      if (action === "download") {
-        showSyncMessage("暂无可下载备份。", false);
-      }
+    function setAuthBusy(isBusy) {
+      els.sendAuthCodeBtn.disabled = isBusy;
+      els.verifyAuthCodeBtn.disabled = isBusy;
+      els.loginAuthBtn.disabled = isBusy;
     }
 
-    function showSyncMessage(text, positive = true) {
-      els.syncMessage.textContent = text;
-      els.syncMessage.style.color = positive ? "var(--green-text)" : "var(--muted)";
-      clearTimeout(state.syncMessageTimer);
-      state.syncMessageTimer = setTimeout(() => { els.syncMessage.textContent = ""; }, 4500);
+    function showAuthMessage(text, positive = true) {
+      els.authMessage.textContent = text;
+      els.authMessage.style.color = positive ? "var(--green-text)" : "var(--muted)";
+      clearTimeout(state.authMessageTimer);
+      state.authMessageTimer = setTimeout(() => { els.authMessage.textContent = ""; }, 4500);
     }
 
     function copyThoughtBundle() {
-      if (!state.account.proActive) {
-        showSyncMessage("请先激活 Pro，再使用一键复制想法。", false);
+      if (!state.account.loggedIn) {
+        showAuthMessage("请先登录，再使用一键复制想法。", false);
         return;
       }
       const notes = getNotesInCurrentRange().filter((note) => note.thoughts.length);
       if (!notes.length) {
-        showSyncMessage("当前范围还没有想法记录。", false);
+        showAuthMessage("当前范围还没有想法记录。", false);
         return;
       }
       copyText(getThoughtExportText(notes));
-      showSyncMessage("想法记录已复制，可粘贴给 AI 分析。", true);
-    }
-
-    function resetProForTesting() {
-      state.account = normalizeAccount(null);
-      saveData();
-      renderAccountDrawer();
-      showSyncMessage("已切回基础版，方便测试未激活状态。", false);
-    }
-
-    function copyProContactText() {
-      copyText("YKLSAC");
-      showSyncMessage("微信号已复制，前往添加。", true);
+      showAuthMessage("想法记录已复制，可粘贴给 AI 分析。", true);
     }
 
 
@@ -2633,10 +2687,11 @@
     function normalizeAccount(account) {
       const value = account && typeof account === "object" ? account : {};
       return {
-        proActive: Boolean(value.proActive),
-        code: String(value.code || ""),
-        password: String(value.password || ""),
-        activatedAt: value.activatedAt || "",
+        loggedIn: Boolean(value.loggedIn || value.proActive),
+        email: String(value.email || ""),
+        userId: String(value.userId || ""),
+        token: String(value.token || ""),
+        loginAt: value.loginAt || value.activatedAt || "",
         lastUploadAt: value.lastUploadAt || "",
         lastUploadPlatform: value.lastUploadPlatform || "",
         lastDownloadAt: value.lastDownloadAt || ""
@@ -2898,7 +2953,7 @@
       const withThoughts = notes.filter((note) => note.thoughts.length);
       els.noteDetailTitle.textContent = "想法记录";
       const exportText = getThoughtExportText(withThoughts);
-      const thoughtToolbar = state.account.proActive && withThoughts.length
+      const thoughtToolbar = state.account.loggedIn && withThoughts.length
         ? `<div class="note-detail-toolbar"><button class="ghost" type="button" data-note-action="copy-all-thoughts">一键复制想法</button></div>`
         : "";
       els.noteDetailBody.innerHTML = withThoughts.length

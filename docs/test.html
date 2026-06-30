@@ -122,68 +122,53 @@
     <div class="drawer-head">
       <div>
         <h2>个人中心</h2>
-        <p class="drawer-note">Pro 为一次性激活。后续新增功能会自动显示在这里。</p>
+        <p class="drawer-note">测试页先验证邮箱登录。登录后，本机数据仍保存在当前浏览器。</p>
       </div>
       <button class="icon-button" type="button" id="accountCloseBtn" aria-label="关闭个人中心">×</button>
     </div>
 
     <section class="drawer-section">
       <h3>账号状态</h3>
-      <div class="account-status inactive" id="accountStatus"><strong>基础版 · Pro 未激活</strong></div>
-      <p class="drawer-note" id="accountHint">未激活时，数据只保存在当前浏览器。请勿把账号和密码分享给他人。</p>
+      <div class="account-status inactive" id="accountStatus"><strong>未登录</strong></div>
+      <p class="drawer-note" id="accountHint">未登录时，数据只保存在当前浏览器。登录后可为后续备份功能做准备。</p>
     </section>
 
-    <section class="drawer-section">
-      <h3>升级 Pro</h3>
-      <div class="upgrade-card">
-        <strong>给复盘数据一个备份，不怕换设备、清缓存或误删。</strong>
-        <ul class="pro-benefits">
-          <li>数据备份：把本机复盘数据保存到你的账号</li>
-          <li>防丢失恢复：清空缓存或换浏览器后可恢复</li>
-          <li>一次性激活，后续新增 Pro 能力自动获得</li>
-        </ul>
-        <button class="upgrade-price" type="button" id="copyProContactBtn"><strong>一次性获取 Pro</strong><span>联系我获取账号和密码</span></button>
-      </div>
-    </section>
-
-    <section class="drawer-section" id="proActivationSection">
-      <h3>Pro 激活</h3>
-      <div class="drawer-form" id="proInactivePanel">
-        <input id="proCodeInput" type="text" autocomplete="off" placeholder="账号 / 卡密">
-        <input id="proPasswordInput" type="password" autocomplete="off" placeholder="密码">
-        <button class="primary" type="button" id="activateProBtn">激活并绑定本机数据</button>
-      </div>
-      <div class="pro-active-panel" id="proActivePanel" hidden>
-        <div class="account-card">
-          <div class="account-row"><span>账号</span><div class="account-value" id="accountCodeDisplay">-</div><button class="tiny-button" type="button" data-account-copy="code">复制</button></div>
-          <div class="account-row"><span>密码</span><div class="account-value" id="accountPasswordDisplay">••••••</div><button class="tiny-button" type="button" data-account-copy="password">复制</button></div>
+    <section class="drawer-section" id="emailLoginSection">
+      <h3>邮箱账号</h3>
+      <div class="drawer-form" id="emailLoginPanel">
+        <input id="authEmailInput" type="email" autocomplete="email" placeholder="邮箱">
+        <input id="authPasswordInput" type="password" autocomplete="current-password" placeholder="密码，至少 6 位">
+        <div class="auth-code-row">
+          <input id="authCodeInput" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="验证码">
+          <button class="ghost" type="button" id="sendAuthCodeBtn">发送验证码</button>
         </div>
-        <div class="pro-activated-note">当前数据已绑定到这个账号。为避免数据丢失，请不要外借账号；如果忘记账号，可以根据购买记录人工协助恢复。</div>
-        <button class="ghost test-reset-pro" type="button" id="resetProTestBtn">测试：切回基础版</button>
+        <button class="primary" type="button" id="verifyAuthCodeBtn">注册并登录</button>
+        <button class="ghost" type="button" id="loginAuthBtn">已有账号登录</button>
+        <p class="drawer-note">新账号先发送验证码，再注册。已有账号可直接用邮箱和密码登录。</p>
       </div>
+      <div class="pro-active-panel" id="emailLoggedInPanel" hidden>
+        <div class="account-card">
+          <div class="account-row"><span>邮箱</span><div class="account-value" id="accountEmailDisplay">-</div><button class="tiny-button" type="button" data-account-copy="email">复制</button></div>
+          <div class="account-row"><span>登录</span><div class="account-value" id="accountLoginAtDisplay">-</div><button class="tiny-button" type="button" id="logoutAccountBtn">退出</button></div>
+        </div>
+        <div class="pro-activated-note">当前浏览器已登录。下一步接入云端备份后，数据会绑定到这个邮箱账号。</div>
+      </div>
+      <div class="sync-message" id="authMessage" role="status"></div>
     </section>
 
     <section class="drawer-section">
       <h3>数据同步</h3>
       <div class="sync-action-grid">
-        <button class="sync-action" type="button" id="syncUploadBtn">
+        <button class="sync-action" type="button" id="syncUploadBtn" disabled>
           <strong>上传数据备份</strong>
-          <span id="syncUploadHint">上次备份：暂无</span>
+          <span id="syncUploadHint">下一步接入云端备份</span>
         </button>
-        <button class="sync-action" type="button" id="syncDownloadBtn">
+        <button class="sync-action" type="button" id="syncDownloadBtn" disabled>
           <strong>下载最新数据至本机</strong>
-          <span>下载后本机数据将被覆盖</span>
+          <span>下载前会再次确认覆盖风险</span>
         </button>
       </div>
-      <div class="sync-confirm" id="syncConfirm" hidden>
-        <strong id="syncConfirmTitle">确认同步</strong>
-        <p id="syncConfirmText"></p>
-        <div class="sync-confirm-actions">
-          <button class="ghost" type="button" id="syncCancelBtn">取消</button>
-          <button class="primary" type="button" id="syncConfirmBtn">确认</button>
-        </div>
-      </div>
-      <div class="sync-message" id="syncMessage" role="status"></div>
+      <div class="sync-message" id="syncMessage" role="status">当前阶段只验证邮箱登录，同步按钮暂不执行。</div>
     </section>
   </aside>
 
